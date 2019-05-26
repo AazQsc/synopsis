@@ -1,0 +1,58 @@
+sАннотация(@Annotation) — форма метаданных, предоставляющая данные о программе, которая не является частью самой программы. Аннотации не имеют прямого влияния на работу кода, они аннотируют его и представляют из себя лишь мета информацию.
+
+import java.lang.annotation.*;
+@Target(value=ElementType.FIELD)
+@Retention(value= RetentionPolicy.RUNTIME)
+public @interface Name {
+     String name();
+     String type() default  “string”;
+}
+
+Аннотация @Retention позволяет указать жизненный цикл аннотации: будет она присутствовать только в исходном коде (SOURSE), в скомпилированном файле(CLASS), или она будет также видна и в процессе выполнения (RUNTIME). Выбор нужного типа зависит от того, как вы хотите использовать аннотацию, например, генерировать что-то побочное из исходных кодов, или в процессе выполнения стучаться к классу через reflection. 
+
+Аннотация @Target указывает, что именно мы можем пометить этой аннотацией, это может быть поле, метод, тип и т.д.
+
+---------------------------------------------------------------------------------------------------------------------------------------
+@interface My{ 
+	String str();
+	int val();
+} 
+
+Символ @ - указывает компилятору, что объявлена аннотация. Методы, объявленные в аннотации ведут себя скорее как поля.
+
+//Аннотирование метода. 
+@My(str = "Пример аннотации", val = 100) 
+public static void myMeth() { // ... 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+public class Solution {
+  public static void main(String[] args) throws Throwable {
+
+    for (Method method : Solution.class.getDeclaredMethods()) {
+        int count = 0;
+        for (Annotation annotation : method.getDeclaredAnnotations())
+            if (annotation.annotationType() == Repeat.class) {
+                count = method.getAnnotation(Repeat.class).count();
+                break;
+            }
+
+        for (int i = 0; i < count; i++) {
+            method();
+	}
+    }
+  }
+
+  @Repeat(count = 10)
+  public static void method() {
+     System.out.println("hello world");
+  }
+
+  @Target(ElementType.METHOD)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface Repeat {
+      int count() default 1;
+  }
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------
+https://devcolibri.com/%D0%BA%D0%B0%D0%BA-%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D1%82%D1%8C-%D1%81%D0%B2%D0%BE%D1%8E-%D0%B0%D0%BD%D0%BD%D0%BE%D1%82%D0%B0%D1%86%D0%B8%D1%8E-%D0%B2-java/

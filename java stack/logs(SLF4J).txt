@@ -1,0 +1,36 @@
+SLF4J (Simple Logging Facade for Java) — библиотека для протоколирования, ставящая своей целью предоставить максимально простой, но при этом мощный фасад для различных систем протоколирования на Java.
+
+Реализация может быть выбрана и сконфигурирована без изменения кода приложения. Slf4J прозрачно интегрируется со следующими реализациями:
+	NOP — реализация, не выполняющая никаких действий
+	Simple — использование стандартного вывода для логов
+	Java Logging API — система протоколирования, включенная в JDK
+	Log4J — одна из наиболее известных систем протоколирования для java
+	JCL — фреймворк, также предоставляющий адаптер для протоколирования
+	LogBack — система протоколирования, представляющая собой развитие log4j и специально разработанная для использования совместно с slf4j
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.8.0-beta0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.8.0-beta0</version>
+        </dependency>
+
+
+Log4j — библиотека журналирования Java программ, часть общего проекта «Apache Logging Project».
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.10.0</version>
+        </dependency>
