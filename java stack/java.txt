@@ -183,6 +183,7 @@ https://docs.oracle.com/javase/7/docs/api/java/lang/instrument/Instrumentation.h
 
 Пример с использованием sun.misc.Unsafe:
 https://stackoverflow.com/questions/9368764/calculate-size-of-object-in-java
+
 --------------------------------------------------------------------------------
 4. Использовать разницу Runtime
 Далеко не универсальный способ, но, когда он подходит, хорошо работает.
