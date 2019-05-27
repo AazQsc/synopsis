@@ -1,0 +1,12 @@
+package by.yar.home;
+
+global Priority s;
+rule "Modifying LOW Items"
+     when
+        $item: Item(itemPrioryty == Priority.LOW)
+     then
+
+        // мы можем использовать джавовые библиотеки в правилах
+        System.out.println("found low priority!");
+        //$item.setItemPrioryty(Priority.HIGHT);
+end

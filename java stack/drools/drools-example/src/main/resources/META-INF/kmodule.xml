@@ -1,0 +1,5 @@
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://jboss.org/kie/6.0.0/kmodule">
+    <!-- Этот файл будет использоваться для настройки загрузки правил, определенных в проекте -->
+
+</kmodule>

@@ -1,0 +1,30 @@
+group 'by.yar.home'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    /* 1
+     * kie-api содержит все публичные интерфейсы, открытые платформой KIE,
+     * которая состоит из Drools, jBPM и OptaPlanner
+     */
+    compile group: 'org.kie', name: 'kie-api', version: '7.7.0.Final'
+    /* 2
+     * содержит реализацию механизма правил Drools
+     */
+    compile group: 'org.drools', name: 'drools-core', version: '7.7.0.Final'
+    /* 3
+     * содержит алгоритм для перевода правил, написанных в разных ресурсах
+	 * (текстовые файлы, электронные таблицы, ваши собственные типы и т. Д.) в исполняемые правила
+     */
+    compile group: 'org.drools', name: 'drools-compiler', version: '7.7.0.Final'
+
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

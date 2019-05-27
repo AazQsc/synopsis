@@ -1,0 +1,8 @@
+package by.yar.home;
+
+rule "Setting medium prioryti by Items"
+     when
+        $item: Item(cost >= 4 && cost <= 7)
+     then
+        $item.setItemPrioryty(Priority.MEDIUM);
+end

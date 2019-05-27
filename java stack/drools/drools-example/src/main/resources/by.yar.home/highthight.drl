@@ -1,0 +1,8 @@
+package by.yar.home;
+
+rule "Setting hight prioryti by Items"
+     when
+        $item: Item(cost > 7)
+     then
+        $item.setItemPrioryty(Priority.HIGHT);
+end

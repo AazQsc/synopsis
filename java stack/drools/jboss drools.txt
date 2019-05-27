@@ -1,0 +1,851 @@
+ JBoss Drools - это процессор правил с открытым кодом, написанный на Java и выполняющий правила в соответствии с алгоритмом PHREAK (ранее Рете).
+
+ Цель: упростить разработку и поддержку бизнес-логики.
+
+ Оснавная задача: заменить систему java-классов описывающих бизнес логику на систему drools-классов.
+
+ Достоинства:
+1) drools-система проще в построении и поддержке (мало времени на изменениния)
+2) Возможно менять логику без перекомпиляции
+3) Возможно декларативно описывать логические следствия, вытекающие из определенных условий (сконцентрироваться на логике)
+4) В файлы правил можно вставлять фрагменты кода на Java
+5) Высокая скорость применения правил
+
+Когда использовать?
+• имеем очень сложный сценарий(бизнес-логику), которую трудно полностью определить даже бизнес-экспертам
+	- пример системы (почему система сложна?)
+	- системы обнаружения мошенничества(имеем много критериев оценки)
+	- субъектоориентированная розничная торговля (скидки, купоны, статусы, акции, шмакции и т.п.)
+	- программное обеспечение для подсчета очков (кредиты, прогнозы, долги)
+• нет известного или четко определенного алгоритмического решения, часто меняющийся сценарий
+• есть неустойчивые требования и их необходимо обновлять очень часто
+• решения должны приниматься быстро, обычно на основе частичных (небольших) объемов данных
+• мы хотим дать возможность менеджменту вносить изменения в логику (Business  Rule Management Systems (BRMS)).
+
+
+Когда НЕ использовать?
+• проект имеет простую логику (2-3 правила, при этом в правилах имеется не более двух вложенных конструкций if-else)
+• если предпологается, что логика останется неизменной на протяжении большого отрезка времени
+• проекты с очень строгой императивной логикой
+
+BRMS, инструмент для работы с правилами: KIE Workbench
+https://docs.jboss.org/jbpm/v6.0/userguide/wb.Workbench.html
+
+
+----------------------------------------------------------------------
+Базовый синтаксис правила (Рисунок 1):
+
+	when a condition is found to be true,		//1
+	then an action is executed					//2
+	
+Можно добавить много синтаксического сахара в эту конструкцию.
+
+	 1. ключевое слово 'when'
+	condition - основное условие или фильтр.
+	Эти фильтры будут просматривать информацию, доступную в домене, для поиска данных, соответствующих определенным критериям.
+		
+	Если в условии на входе мы ожидаем увидеть яблоки (фильтр ждет яблоко), а бросаем в правило апельсины - правило не сработает, 
+	но если среди апельсин будет хоть одно яблоко, фильтр словит его и правило отработает.
+	
+	Каждое правило должно иметь возможность обнаруживать определенный набор обстоятельств и реагировать на него.
+	
+	 2. ключевое слово 'then'
+	После получения группы данных, соответствующих условию, должно быть выполнено действие(action) или последствие, 
+	взяв соответствующие данные в качестве параметра.
+	
+	
+----------------------------------------------------------------------
+Правила работают декларативно:
+
+	Это означает, что управление потоком не определяется порядком правил или порядком входящих данных, 
+	а условиями, объявленными правилами!   <--- ВАЖНО
+
+	Этот декларативный подход позволяет писать любое количество правил, 
+	не беспокоясь о каком-либо конкретном месте, где они должны быть написаны.
+	(Рисунок 4)
+	
+	Правила независимы друг от друга!
+	Они максимально ортогональны.
+		
+	Конечно, эти правила на основе Drools должны выполняться в приложении Java, где последовательность шагов определяется кодом.
+	Чтобы достичь последовательного выполнения правил, механизм правил Drools трансформирует бизнес-правила в деревья выполнения.
+	
+(Рисунок 2)
+	Три правила Drools
+	Слева - правила, как они описаны.
+	Справа - в такое дерево они транформируются.
+	
+	То каким образом строится дерево, зависит от выбранно алгоритма и механизмов оптимизации, заложенных в этот алогритм.
+	В Drools 6 мы имеем дело с алгоритмом PHREAK (ранее использовался алгоритм Pete)
+	
+	Данные попадают в корни этого дерева, и двигаются от узла к узлу.
+	Алгоритм имеет два основных момента работы:
+	1. Он попытается разбить все условия на наименьшее количество единиц
+	2. Он попытается сделать только одну операцию, чтобы перейти на следующий уровень ниже, 
+	   пока не достигнет ложной оценки состояния или листового узла, где правило отмечено для выполнения - что это значит???
+	
+1) Условия правил разбиваются на блоки.
+2) Из блоков собираются деревья. <--- в реальности эти деревья могут иметь очень сложную структуру. 
+3) Гоним данные через деревья.
+4) Как только данные достигают узла действия - они будут помечены как данные, готовые для выполнения определенного правила.
+	
+	Если мы хотим изменить структуру бизнес-логики, нужно просто добавить новое правило или удалить старое, которое уже не используется.
+	
+	!!! Не ссылайтесь явно в правилах на другие правила. Это ведет к императивщине, и излишней связанности.
+				
+Inferences
+	Иногда правила зависят от других косвенным образом. Когда вывод (inferences) одного правила станет условием для выполнения другого.
+	Пример:
+	• Когда мы получаем сигнал от пожарной тревоги, мы делаем вывод, что есть пожар
+	• Когда есть пожар, мы вызываем пожарный отдел
+	• Когда пожарный отдел присутствует, мы позволяем им выполнять свою работу
+	
+	Каждое из этих трех правил может быть сведено к одному, более сложному правилу:
+	• Когда мы получаем сигнал от пожарной тревоги, мы вызываем пожарный отдел и позволяем им выполнять свою работу. 
+	
+	Однако, разделив правила на более простые компоненты, мы можем легко расширить возможности нашего механизма правил. 
+	Мы можем повторно использовать первый вывод о том, что есть огонь, чтобы инициировать другие действия, такие как 
+	активировать аварийные спринклеры, отключить лифты и т.п.
+	
+	Иногда оказывается так что определённый вывод, заставляет несколько правил конкурировать в приоретете между собой.
+	Эти приоритеты можно явно указывать (если необходимо именно последовательно выполнение).
+	В примере выше, - после того как мы узнали о факте наличия пожара - действия: вызвать пожарный отдел, 
+	активировать аварийные спринклеры, отключить лифты и т.п. выполняются параллельно.
+	
+	!!! Стремитесь к атомарности.
+
+	Мы должны стараться максимально упростить наши правила до такой степени, что их нельзя разделить на что-либо. 
+	Атомарное правило - это такое правило которое нельзя разделить получив при этом новые правила.
+	
+	
+----------------------------------------------------------------------
+Жизненный цикл выполнения правил (абстрактно). 
+Rule engine algorithm				(Рисунок 3)
+	
+1. Нашли правила которые проходят по условиям (но действие пока не выполняется, если это явно не указано) - rule to fire (здесь fire - выполнить)
+2. Добавили действия этих правил в Agenda
+3. По команде, все правила (или подгруппа правил) находящиеся на повестке дня выполняются (на этом этапе можно отменить выполнение правила)
+4. Данные изменились, теперь снова идет проверка, появились ли новые правила на повестке дня (Inferences)
+
+Некоторые правила могут не срабатывать, а некоторые могут срабатывать несколько раз подряд.
+Правило отрабатывается столько раз сколько отработает его блок when, тоесть - это нармально, когда у нас одно правило забросило на повестку в agenda множество действий.
+
+----------------------------------------------------------------------
+DRL language
+
+
+----------------------------------------------------------------------
+Установка движка правил и создание первых правил.
+
+1. Зависимости
+	1.1 kie-api содержит все публичные интерфейсы, открытые платформой KIE, которая состоит из Drools, jBPM и OptaPlanner. (KIE - Knowledge is Everything)
+	group: 'org.kie', name: 'kie-api'
+	1.2 drools-core, содержит реализацию механизма правил Drools. 
+	group: 'org.drools', name: 'drools-core'
+	1.3 drools-compiler, содержит алгоритм для перевода правил, написанных в разных ресурсах 
+	(текстовые файлы, электронные таблицы, ваши собственные типы и т. Д.) в исполняемые правила. 
+	Этот артефакт требуется только потому, что мы составляем наши правила в проекте.
+	Можно отделить компиляцию правил от выполнения правил, чтобы удалить эту зависимость.
+	group: 'org.drools', name: 'drools-compiler'
+
+2. Создать файл конфигурации
+	/resources/META-INF/kmodule.xml
+	
+	<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="http://jboss.org/kie/6.0.0/kmodule">
+	</kmodule>
+	
+3. Напишем первое правило!
+
+		package by.yar.home;
+
+		rule "Setting hight prioryti by Items"
+			 when
+				$item: Item(cost > 7)
+			 then
+				$item.setItemPrioryty(Priority.HIGHT);
+		end
+
+Здесь $_____ это объявление переменной item, после двоеточия : класс(в переменную ляжет объект который подходит под условия)
+в скции then работаем с методами объекта
+
+4. Загрузим движек и свяжем с нашими объектами
+
+		//1) Bootstrapping a Rule Engine Session
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+
+        /*
+         * KieSession - представляет собой запущенный экземпляр Rule Engine
+         * с конкретной конфигурацией и набором правил.
+         *
+         * Через этот объект мы взаимодействуем с нашими java объектами
+         */
+        KieSession kSession = kContainer.newKieSession();
+
+		//create obj
+        Item item1 = new Item(1);
+        Item item2 = new Item(5);
+
+        //2) Provide information to the Rule Engine Context
+        kSession.insert(item1);				<-- всё, что мы добавили через инсерт - это факты
+        kSession.insert(item2);					добавить все джава объекты необходимые нам как факты может быть сложно, или просто утомительно
+												есть альтернативные решения по добавлению фактов в сессию
+
+        //3) Execute the rules that are matching
+        int fired = kSession.fireAllRules(); // метод вернет количество выполненных правил
+
+        System.out.println( "Number of Rules executed = " + fired );
+
+
+Код можно сделать проще, если использовать CDI (Contexs and Dependency Injection стр.28 книги и стр 49 пдф) из java ee или DI spring'a
+
+Базовая структура правила:
+
+rule "name"
+when
+ (Conditions) - also called Left Hand Side of the Rule (LHS)
+then
+ (Actions/Consequence) - also called Right Hand Side of the Rule
+(RHS)
+end
+		
+----------------------------------------------------------------------
+БАЗОВЫЙ СИНТАКСИС
+
+$nameofvariable							- переменная
+
+Object()								- Факт и фильтр, конкретно этот фильтр означает - для всех объектов
+										  Мы фильтруем на основе объектов и их свойств!
+
+Cat(name == "Vasiya")					- в скобках находится фильтр, здесь проверяется поле name для всех объектов класса Cat, 
+										  является ли это имя именем "Вася"
+
+$vasiyaCat: Cat(name == "Vasiya") 		- в переменную vasiyaCat поместить кота с именем Вася
+										  если таких котов будет бульше одного переменная отработает для каждого кота
+										  
+$vasiyaCat.say("May");					- просто выполняем джава код
+
+есть и второй способ выполнить код java
+
+modify($vasiyaCat){						- отличие модифай блока в том, что здесь движек правил будет уведомлен об изменениях,
+	say("May")							  и правила зависящие от этого правила заметят эти изменения - то есть изменения станут фактами
+};										- грустный смайлик закрывает блок модифай
+
+
+when $vasiyaCat: Cat(name == "Vasiya")	- следует читать как:
+then $vasiyaCat.say("May, Я Вася");		  у каждого объекта кота, имеющего поле name == "Vasiya", вызвать метод say()
+
+( A > 1, $a: A, B < 1, $b: B)			- в скобках(в фильтре) мы можем чередовать инициализацию переменных и операции булиан как угодно и сколько угодно раз
+boolean, a = A, boolean, b = B
+										  между всеми фильтрами существует неявная 'И'
+										  
+$o: Order( orderLines.size >= 5, $customer: customer )				если подходит размер ордера, выбрать кастомера
+ И
+$c: Customer(this == $customer, category == Customer.Category.NA)	если категория выбранного кастомера = НА 
+тоже что и...
+$c: Customer(category == Customer.Category.NA)						если категория выбранного кастомера = НА 
+$o: Order( orderLines.size >= 5, customer == $c )					и размер ордера этого кастомера подходит
+
+when
+	$o: Order( $customer: customer )
+	$c: Customer(this == $customer, category == Category.SILVER)
+then
+	insert(new Coupon($c, $o, Coupon.CouponType.POINTS));			- мы создаем новый объект типа купона и делаем его доступным для Rule Engine 
+																	  с помощью метода insert(). 
+																	  Это означает, что, как только это правило будет выполнено в Rule Engine, 
+																	  оно вызовет любое другое правило, ожидающее купонов.
+																	  
+Циклы
+	$o: Order( $lines : orderLines.size > 2, discount == null )		Иниц-ем $o Oрдером(инц-ем $линии = размером ордера, если размер больше двух и дискаунт налл),
+		forall( OrderLine( this memberOf $lines, $item : item)			Для всех ордерЛайнов внутри этого ордера 
+			Item(this == $item, category == Item.Category.HIGH_RANGE)		у вех Айтемов внутри должена быть категория - HIGH_RANGE
+		)															заметка: Здесь у нас три фильтра Order(), OrderLine(), Item()
+
+		
+----------------------------------------------------------------------
+API
+
+RULE ENGINE
+Каждый экземпляр Rule Engine представляет собой инкапсулированный контекст, 
+где правила, которые мы определяем, будут оцениваться по отношению к данным, которые мы предоставляем этому конкретному экземпляру.
+
+Есть такая практика, когда мы имеем несколько движков, каждый со своим набором правил и данных.
+
+Создание нового инстанса и работа Rule Engine связано со следующими классами:
+• KieServices
+• KieContainer
+• KieModule
+• KieBase
+• KieSession
+
+---
+Здесь самой главное сущьностью является KieServices. Через него мы получим доступ ко всем другим сущностям.
+Используя KieServices, мы можем получить доступ к нескольким фабрикам, сервисам и утилитам, используемым вместе с экземплярами Rule Engine.
+Создать KieServices можно так:
+	KieServices ks = KieServices.Factory.get();
+
+---
+KieContainer, - определяет область правил, которые будут использоваться для создания новых экземпляров Rule Engine.
+KieContainer может принимать KieModule и его зависимости. Это означает, что иерархическая структура KieModules (Рисунок 5)
+может быть загружена в экземпляр KieContainer.
+
+С помощью контейнера можно создать несколько разных экземпляров движков правил.
+
+В Drools 6 мы можем выбрать один из двух вариантов для определения объема ресурсов и конфигураций, которые будут включены в экземпляр KieContainer:
+ • На основе пути к классам
+	KieContainer kContainer = ks.getKieClasspathContainer();
+ • Использование методов разрешения зависимостей Maven (KIE-CI )
+	KieContainer kContainer = ks.newKieContainer(ks.newReleaseId("org.drools.devguide", "chapter-03-kjar-simple-discounts", "1.0.0"));
+	Используя этот механизм, контейнер будет загружать только конфигурации из этого артефакта и всех его зависимостей.
+
+---
+В Drools 6 все создано вокруг KieModules. Каждый KieModule содержит бизнес-активы (бизнес-правила, бизнес-процессы, таблицы решений и т. Д.), 
+cвязанные с определенной областью или доменом. Эти KieModules могут включать в себя другие KieModules, что позволяет нам создавать KieModule верхнего уровня, 
+содержащий несколько активов из разных доменов.
+Каждый такой модуль связан с java-maven модулем и имеет сою конфигурацию kmodule.xml, свои правила, ресурсы и.т.д.
+
+kmodule.xml соществует для настройки конфигурации KieModules
+Она помогает определить, как правила группируются в разных KieBases, которые могут быть загружены для разных целей. 
+
+Пример простой конфигурации:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://jboss.org/kie/6.0.0/kmodule">
+	<kbase name="rules.cp.discount">									// KieBase представляет собой скомпилированную версию набора активов (правила, процессы)
+		<ksession name="rules.cp.discount.session" type="stateful"/>	// KieSession представляет собой экземпляр механизма правил, содержащего правила в KieBase.
+	</kbase>
+</kmodule>
+
+Резюмируя: мы держим в KieBase готовый набор правил, а в рамках той или иной сессии, можно задавать свои условия использования правил.
+
+Существует два типа KieSession:
+- Stateful	- позволяет нам сохранять состояние между несколькими взаимодействиями с Rule Engine (В друлз 6 переименованы в KieSessions)
+- Stateless - позволяет нам взаимодействовать один раз, извлекать результаты и не сохранять состояние для следующего взаимодействия
+
+Способы получения сессии:
+#1#
+KieSession kSession = kContainer.newKieSession();
+KieSession kSession = kContainer.newKieSession("rules.discount.all");
+
+kSession.insert(ссылка на объект);	// прогнать объект через правила
+kSession.fireAllRules();			// выполить правила, которые прошли по условиям
+
+#2#
+StatelessKieSession statelessKieSession = kContainer.newStatelessKieSession("rules.simple.sl.discount");
+в стейтлесс немного другой механизм управления движком:
+Command newInsertObject = ks.getCommands().newInsert(ссылка на объект, "orderOut"); // создаём комманду
+Command newFireAllRules = ks.getCommands().newFireAllRules("outFired");
+
+List<Command> cmds = new ArrayList<Command>();
+cmds.add(newInsertOdject);
+cmds.add(newFireAllRules);
+
+//и вот так выполнили...
+ExecutionResults execResults = statelessKieSession.execute(ks.getCommands().newBatchExecution(cmds));
+
+А вот так можно вернуть объект из правил (получить на него ссылку, после того, как прогнали его по правилам):
+object = (object)execResults.getValue("objectOut");
+
+----------------------------------------------------------------------
+Динамическое добавление правил.
+
+Необходимо использовать компонент KieScanner. KS - это обертка вокруг KieContainer, которая может быть настроена на
+автоматическое обнаружение изменений в ресурсах, от которых зависит контейнер. 
+Есть нюанс - ресурсы, на которые ссылается контролируемый KieContainer, должны быть KieJars, и должны находятся в репозитории Maven.
+Здесь просто нужно запомнить потенциальное место для ошибки, далее:
+
+KieServices ks = KieServices.Factory.get ();
+KieContainer kieContainer = ks.newKieContainer(ks.newReleaseId("group.test","artifact-test", "1.0"));
+KieScanner scanner = ks.newKieScanner(kieContainer);
+
+Два режима работы сканнера:
+//Manually run a check for new versions - проверить здесь и сейчас
+scanner.scanNow();
+//Configure the scanner to check for new versions every 10 seconds - проверять каждые 10 сек.
+scanner.start(10_000); //есть метод stop
+
+Если сканнер в ходе своеё работы найдет ошибку (например ошибка с версией или названием артифакта), то ничего не произойдет,
+все ошибки он будет пробрасывать молча
+
+----------------------------------------------------------------------
+СИНТАКСИС ++
+
+Глобальная переменная - ключевое слово global, за которым следует тип данных, а затем имя переменной:
+global EShopConfigService configService;
+Глобальные переменные находятся вне области рабочей памяти и не переоцениваются
+
+
+Операции работы с данными в рабочей памяти:
+insert(new IsLowRangeItem($i));						// создаём объект используя конструктор, уведомляем об этом движок
+modify($c){setCategory(Customer.Category.GOLD);}	// вносим изменения в объект $c используя его сеттер, уведомляем об этом движок
+delete($cp);										// удаляем объект $cp, уведомляем об этом движок
+
+### Атрибуты правил: ###
+
+rule "simple attribute example"
+enabled false										<- пишем в шапке, конкретно это означает, что правило не будет выполнено, хоть и отработает
+ when Customer()
+ then System.out.println("we have a customer");
+end
+
+
+rule "simple attribute example"
+salience 10											<- приоритет исполнения правила (может быть отрицательным)
+ when Customer()
+ then System.out.println("we have a customer");
+end
+
+rule "Classify Item - Mid/High Range (special)"
+no-loop												<- не выполнять это правило дважды для одного и того же объекта (если он несколько раз подряд подошел под условия)
+no-loop true										<- тоже самое
+salience 10
+ when
+ $i: Item( cost > 300 && cost < 400 )
+ then
+ $i.setCategory(
+ Item.Category.SPECIAL_MIDHIGH_RANGE);
+ update($i);
+end
+
+global EShopConfigService configService;			<- глобальная переменная, этот тип обладает полем midHighCategoryEnabled (пригодиться позже)
+...
+rule "Classify Item - Mid/High Range (special)"
+no-loop
+salience ($i.getCost())								<- так можно получить приоритет
+enabled(configService.isMidHighCategoryEnabled())	<- достали булиан значение midHighCategoryEnabled
+ when
+ ...
+ then
+ ...
+end
+
+rule "Promotion: more than 10 pencils get 10% discount"
+ agenda-group "promotions"							<- поместили правила на повестку дня под именем "promotions"
+ when
+ OrderLine(item.name == "pencil", quantity > 10)
+ then
+ insert(new Discount(0.10));
+end
+													А вот так выполним правила определённой в повестке дня "promotions"
+													KieSession ksession = …;
+													ksession.getAgenda().getAgendaGroup("promotions").setFocus();
+													ksession.fireAllRules();
+													
+rule "Add special tax of 3%"
+ date-effective "01-Jan-2015"						<- дата начала работы правила
+ date-expires "31-Dec-2020"							<- дата окончания работы правила
+ calendars "weekdays"								<- только по будням
+ when $i: Item()
+ then $i.setSalePrice($i.getSalePrice() * 1.03);
+end
+													 Календари должны быть настроены через KIESession с использованием 
+													 метода getCalendars следующим образом:
+													ksession.getCalendars().set("weekday", new Calendar() {
+													 //for simplicity, any date/time matches this calendar
+													 public void isTimeIncluded(long timestamp) {
+													 return true;
+													 }
+													});
+													
+	Следующие два правила перезапускают друг-друга:
+rule "Give extra 2% discount for orders larger than 15 items"
+ no-loop true
+ when $o: Order(totalItems > 15)
+ then modify ($o) { increaseDiscount(0.02); }
+end
+rule "Give extra 2% discount for orders larger than $100"
+ no-loop true
+ when $o: Order(total > 100.00)
+ then modify ($o) { increaseDiscount(0.02); }
+end
+	Решение:
+rule "Give extra 2% discount for orders larger than $100"
+ lock-on-active true								<- правило не получает повторное включение для одних и тех же объектов
+ when $o: Order(total > 100.00)
+ then modify ($o) { increaseDiscount(0.02); }
+end
+	Ещё эту проблему можно решить установкой флагов в изменяемых объектах
+	
+### Декларирование новых типов: ###
+
+declare SpecialOrder extends Order
+ whatsSoSpecialAboutIt: String
+ order: Order
+ applicableDiscount: Discount
+end
+
+К такому объекту даже можно получить доступ из джава:
+KieSession ksession = ...; //previously initialized
+FactType type = ksession.getKieBase().getFactType("chapter04.declaredTypes", "SpecialOrder");
+Object instance = type.newInstance();
+type.set(instance, "relevance", 2L);
+Object attr = type.get(instance, "relevance");
+
+### Реактивные компоненты: ###
+
+declare PropertyReactiveOrder
+ @propertyReactive				<- данная аннотация доступна и для джава классов, теперь объект этого класса будет реактивным.
+ discount: Discount
+ totalItems: Integer
+ total: Double
+end
+
+для чего всё это нужно?
+Мы добавляем аннотацию @Watch(!discount) после каждого фильтра, который НЕ должен срабатывать, после изменения сделанного с этим объектом,
+то есть правило ниже отрабатывает так будто бы у него стоит атрибут no-loop или lock-on-active
+	
+rule "Larger than 20 items orders are special orders"
+ when
+	 $o: PropertyReactiveOrder( totalItems > 20) @Watch(!discount)
+ then
+	 modify ($o) {
+		setDiscount(new Discount(0.05));
+	 }
+end
+
+	Виды вотчеров:
+• @Watch (скидка, всего): это только отслеживает изменения дисконта и общие атрибуты
+• @Watch (! Discount): Это означает, что мы должны игнорировать изменения в атрибут скидки для компонента
+• @Watch (! *, Total): Это означает, что мы должны игнорировать все атрибуты bean, за исключением полного атрибута
+• @Watch (! *, Total, totalItems): Это означает, что мы должны обратить внимание к изменениям общего и итогового атрибутов, другие изменения игнорируются
+
+	### ### ###
+
+contains - содержит ли коллекция какой-то элемент
+memberOf - содержится ли этот элемент в какой-то коллекции
+	
+rule "print orders with pencils in them"
+	when
+		$i: Item(name == "pencil")
+		$ol: OrderLine(item == $i)
+		$o: Order($ol memberOf orderLines, orderLines contains $ol) //по сути два раза проверяем одно и тоже условие
+	then
+		System.out.println("order with pencils: " + $o);
+end
+
+	### ### ###
+
+from - определения определенного пространства поиска за пределами рабочей памяти. А вообще можно использовать почти со всем, что возвращает значение.
+
+rule "For every notebook order apply points coupon"
+	when
+		$o: Order($c: customer, $lines: orderLines) 	// ищем Ордеры, из каждого Ордера сохраняем, как коллекцию строк, заказы в переменную $lines
+														   и клиента в переменную $c
+		OrderLine($items: item) from $lines				// Ищем все item из коллекции заказов $lines записываем из в коллекцию $items
+		Item(name == "notebook") from $items			// Ищем, есть ли среди $items Item с именем "notebook"
+	then
+		insert(new Coupon($c, $o, CouponType.POINTS));
+end
+
+Аналог - В друлз 6.3 можно сделать вот так:
+
+rule "For every notebook order apply points coupon"
+	when
+		$o: Order($c: customer, /orderLines/item{name == "notebook"} )
+	then
+		insert(new Coupon($c, $o, CouponType.POINTS));
+end
+
+	### ### ###
+
+Ключевое слово «collect» используется для поиска всех элементов, соответствующих определенному условию, и группировки их в коллекцию. 
+Позднее эта коллекция может быть назначена переменной или представлена на дополнительные условия, а именно:
+
+rule "Grouping orders"
+	when
+		$list: List(size > 0) from collect(Order()) //Собрать листы из всех Ордеров, если в них что-то есть ( > 0 )
+	then
+		System.out.println("we've found " +
+		$list.size() + " orders");
+end
+
+	### ### ###
+	
+accumulate - нужен для создания сложных выборок, возможно проведение расчетов внутри
+	
+Хотим - получить общее количество элементов в порядке, следующем за определенным условием.
+
+rule "10+ items with sale price over 20 get discount"
+ when
+	 $o: Order($lines: orderLines)				// проверяем каждый объект Order, который у нас есть 
+												   в нашей рабочей памяти, и сохраняем атрибут линий заказов в переменной для последующего использования
+	 Number(intValue >= 10) 					// есть ли у нас как минимум 10 предметов с ценой выше 20?
+	 from accumulate( 							// аккомулируем следующее выражение. Оно вернёт нам количество result(count) Numberов
+	  OrderLine( item.salePrice > 20.00, $q: quantity ) from $lines,	// выбираем все OrderLine из $lines, которые подходят по условиям и для них:
+	  init(int count = 0;),						// Это делается в начале накопления. Он инициализирует переменные, 
+												   которые будут использоваться каждый раз, когда мы найдем совпадение в состоянии накапливания. 
+												   В нашем случае мы инициализируем переменную count.
+	  action(count += $q),						// Всякий раз, когда мы находим элемент в рабочей памяти, который соответствует условию накапливания, 
+												   механизм правил запускает секцию действия кода в накопителе. 
+												   В нашем примере мы увеличиваем количество элементов по значению переменной $ q, 
+												   которая содержит количество объекта OrderLine
+	  reverse(count -= $q),						// Это дополнительный блок кода. Этот метод будет вызван, если произойдет изменение объекта, который уже попал в выборку
+	  result(count)								// Этот блок вернёт то что саккамулированно
+	 )
+ then
+	$o.increaseDiscount(0.05);
+end
+
+Вот ещё некоторые методы accumulate:
+• count: Это ведет к подсчету переменной, которая соответствует условию 
+• sum: суммирует переменную
+• avg: Это получает среднее значение переменной для всех совпадений в накоплении. 
+• min: Из всех значений переменных, полученных в условии накопления, это возвращает минимальное значение. 
+• max: из всех значений переменных, полученных в условии накопления, это возвращает максимальный результат. 
+• collectList: он сохраняет все значения указанной переменной в условии в упорядоченном списке и возвращает их после накопления. 
+• collectSet: сохраняет все значения указанной переменной в условии в наборе уникальных элементов и возвращает их после накопления.
+
+	### ### ###
+
+NOT и OR
+
+rule "warn about empty working memory"
+ when
+	not(Order() or Item()) // в момент запуска правил у нас должен быть хотя бы 1 объект Order или Item. Если мы этого не сделаем, оно выведет предупреждение
+ then
+	System.out.println("we don't have elements");
+end
+
+	### ### ###
+
+EXISTS
+
+rule "with exists"
+ when
+	exists(Order())						<- у нас есть ордер?
+ then
+	System.out.prinltn("We have orders");
+end
+
+	### ### ###
+
+FORALL - любой объект, который соответствует первому условию, должен соответствовать второму условию, чтобы сделать forall истинным.
+
+rule "make sure all orders have at least one line"
+	 when
+		exists(Order()) forall (			// 1е условие - если объект есть, 2е условие - эти объекты, соответствуют ли они orderLines.size() > 0 ?
+							Order() 
+							Order(orderLines.size() > 0)
+						)
+	 then
+		System.out.println("all orders have lines");
+end
+
+	### Синтаксический сахар ###
+	
+Доступ ко вложенным сущьностям 
+OrderLine( item.cost < 30.0, item.salePrice < 25.0 )	// было
+OrderLine( item.( cost < 30.0,salePrice < 25.0) )		// стало
+
+
+SpecialCustomer это подтип customer, и у этого SpecialCustomer есть атрибут specialDiscount
+вот как его проверить:
+Order(customer#SpecialCustomer.specialDiscount > 0.0)
+
+
+Проверки на null: проверяем условие, только если оно не равно null
+Order(									 // было
+	customer != null,
+	customer.category != Category.NA
+)
+
+Order(customer!.category != Category.NA) // стало
+
+	### Черты - trait ###
+
+Это прилагательные, которые мы можем добавить к любому типу, эти прилогательные в свою очередь добавят нам некоторые атрибуты в существующие объекты
+
+Как создать?
+1.повесить на джава класс аннотацию - @Trait
+2. Задекларировать в друлзах
+	declare trait KidFriendly
+	 kidsAppeal: String
+	end
+3. Повесить аннатацию @Traitable на те объекты к которым мы можем применить черту 
+	
+Как использовать? 
+
+rule "toy items are kid friendly"
+ no-loop											// нужно обязательно, иначе условие будет всегда отрабатывать
+	when $i: TraitableItem(name contains "toy")		// если name у TraitableItem == "toy" запомним его как $i
+ then
+	 KidFriendly kf = don($i, KidFriendly.class);	// методом don повесим черту KidFriendly на $i (don - это аналог insertLogical)
+	 kf.setKidAppeal("can play with it");
+end
+
+Как убрать черту?
+Object o = shed( $traitedObject, KidFriendly.class)
+
+### Логическая вставка ###
+
+rule "determine large orders"
+ when $o: Order(total > 150)						// Если Order.total > 150 
+ then insert(new IsLargeOrder($o));					// вставим new IsLargeOrder($o) в область рабочей памяти навсегда
+end
+
+rule "determine large orders"
+ when $o: Order(total > 150)						// Если Order.total > 150 
+ then insertLogical(new IsLargeOrder($o));			// вставим new IsLargeOrder($o) в область рабочей памяти, но удалим этот объект от туда если его total 
+end													   измениться и перестанет подходить под условия (станет меньше 150 или равен 150)
+
+и вот такой вариант:
+don($traitObj, SomeTrait.class, true);				// (что вставляем, какого типа, объект будет в рабочей памяти пока правило истинно)
+
+
+### аннотаци для верификации работы правил ###
+Увеличивают связанность правил, это плохо!!!
+
+• @Strict: Это означает правило, которое нельзя победить. 
+	В этом типе сценария полезно отметить правила, которые не должны быть переопределены каким-либо другим.
+• @Defeasible: это означает правило, которое может иметь отклонения.
+• @Defeats: эта аннотация получает список определенных правил, которые это правило может победить. 
+	Это тот момент, когда независимость правила нарушается, поскольку он должен знать название других правил.
+• @Defeater: Это означает особый случай поражений. Он может победить другие правила, но сделанные изменения не будут распространяться в рабочей памяти. 
+	Это означает, что правила, отмеченные с помощью @Defeater, не будут вызывать другие правила. 
+	В очень сложных сценариях это может быть полезно для остановки цепей отклонений.
+	
+	и нужно добавить конфигурацию:
+<kbase name="ruleExceptionsKbase"
+	equalsBehavior="equality"
+	packages="chapter04.ruleExceptions">
+		<ksession name="ruleExceptionsKsession"
+			beliefSystem="defeasible"/>
+</kbase>
+
+### Наследование ###
+
+	rule "A"
+	 when
+	  s: String(this == "A")
+	 then
+	  System.out.println(s);
+	end
+			rule "B" extends "A"
+			 when
+			  i: Integer(intValue > 2)
+			 then System.out.println(i);
+			end
+
+читать как:
+
+	rule "A"
+	 when
+	  s: String(this == "A")
+	 then
+	  System.out.println(s);
+	end
+			rule "B"
+			 when
+			  s: String(this == "A")
+			  i: Integer(intValue > 2)
+			 then
+			  System.out.println(i);
+			end
+			
+### go to ###
+
+rule "A and B combined"
+	when
+		s: String(this == "A")
+		do[aCase]					<- Go!
+		i: Integer(intValue > 2)
+	then
+		System.out.println(i);
+	then[aCase]						<- to them!
+		System.out.println(s);
+end
+
+### запросы ###
+- это правила без правой части, которые дают возможность вернуть какой-либо объект
+
+query "Get Customer Suspicious Operations" (String $customerId)
+ $so: SuspiciousOperation(customer.customerId == $customerId)
+end
+
+QueryResults queryResults = ksession.getQueryResults("Get All Suspicious Operations");
+for (QueryResultsRow queryResult : queryResults) {
+	 SuspiciousOperation so = (SuspiciousOperation) queryResult.get("$so");
+
+	 //...
+}
+
+query isItemContainedIn(Item p, Item w)					<--
+	IsPartOf(w, p;)
+	or (IsPartOf(x, p;) and isItemContainedIn(x, w;))
+end
+
+rule "Apply discount to orders with related items"
+no-loop true
+when
+	$o: Order()
+	 exists (
+	 OrderLine($item1 := item) from $o.orderLines and
+	 OrderLine($item2 := item) from $o.orderLines and
+	 isItemContainedIn($item1, $item2;)					<--
+	 )
+then
+	modify ($o){ increaseDiscount(0.05) };
+end
+
+Drools поддерживает объединение аргументов в своих шаблонах с помощью символа :=   (унификация)
+Это означает, что одна и та же переменная может использоваться в нескольких местах: первое вхождение переменной привяжет ее к значению, 
+и любое другое вхождение будет ограничивать это значение
+
+query isItemContainedIn(Item p, Item w)
+ IsPartOf(w := whole, p := part)			<- одного из аргументов может не быть
+end
+
+----------------------------------------------------------------------
+Шаблоны правил в Drools - это способ генерации правил DRL «на лету» с использованием файлов шаблонов и источников табличных данных.
+Это один из способов работы Drools с внешними источниками данных
+
+Шаблон правила Drools представляет собой текстовый файл, содержащий специальные ключевые слова, которые помогают ему разграничить различные разделы шаблона 
+и определить, какие переменные внутри шаблона нужны и где они должны использоваться.
+	---
+ template header														<- начало шаблона
+
+ minAge																	<- 4 имени переменных, которые вводит шаблон 
+ maxAge																	   соответствуют именам колонок в БД
+ previousCategory
+ newCategory
+
+ package chapter07.ruletemplate.simple;
+
+ import org.drools.devguide.eshop.model.Customer;
+
+ template "classification-rules"										<- Шаблон будет создан для каждой строки БД
+ rule "Categorize Customers_@{row.rowNumber}"							   Каждое правило при этом будет иметь своё собственное имя, @{row.rowNumber} - номер строки
+	 no-loop true
+	 when
+		$c: Customer(age >= @{minAge}, age <= @{maxAge}, category ==	<- @{var_name} так мы достаём внешние ресурсы
+		Customer.Category.@{previousCategory})
+	 then
+		modify ($c){ setCategory(Customer.Category.@{newCategory})};
+ end
+ 
+ end template															<- конец шаблона
+	---
+Drools поддерживает - spreadsheets, arrays, objects, and SQL result sets
+----------------------------------------------------------------------
++ http://www.kiegroup.org/
++ посмотри плагин для идеи?
++ Алгоритм Rete(Charles Forgy)  + PHREAK(Mark Proctor)
+
+
+Проблемные места которые нужно проработать:
+forall
+
+UFM
+Source\ufm-bundle-bis\src\main\resources\settings\filter_rules\Filter.drl			- почему разное расширение?
+Source\ufm-bundle-bis\src\main\resources\settings\business_rules\CommonQueries.drt	- сюда вынесены методы
+
+-----------------------------------------------------------------------
+Примеры
+
+вызов метода из java класса
+$clientlog1 : Boolean () from DroolsQueryUtils.clientLog(drools.getRule().getName(), $clnt);
+
+
+

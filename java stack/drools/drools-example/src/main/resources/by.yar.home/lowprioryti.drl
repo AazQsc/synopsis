@@ -1,0 +1,20 @@
+package by.yar.home;
+
+rule "Setting low priority by Items"
+     no-loop true
+     when
+        $item: Item(cost < 4)
+     then
+        System.out.println("Out intro rules.");
+
+        /* Отличие modify от
+         * $item.setItemPrioryty(Priority.LOW);
+         * в том, что в модифай мы оповещаем движек об изменениях
+         * тоесть правила зависящие от этого правила будут выполнены
+         *
+         * если убрать modify, то правило 'Modifying LOW Items' не будет выполнено
+         */
+        modify($item){
+            setItemPrioryty(Priority.LOW)
+        };
+end
