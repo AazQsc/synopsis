@@ -482,7 +482,8 @@ end
 
 Календари должны быть настроены через KIESession с использованием 
 метода getCalendars следующим образом:
-													ksession.getCalendars().set("weekday", new Calendar() {
+
+ksession.getCalendars().set("weekday", new Calendar() {
 //for simplicity, any date/time matches this calendar
 public void isTimeIncluded(long timestamp) {
 		return true;
