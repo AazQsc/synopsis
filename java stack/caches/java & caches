@@ -1,0 +1,111 @@
+
+================================================================================
+Библиотеки имеющие встроенные кеши: ____________________________________________
+Приведены наиболее часто упоминаемые примеры.
+Самих библиотек достаточно много, и найти их не сложно.
+
+1. Google's Guava library (Caches)
+
+	Добавляет коллекции Cache и LoadingCache
+	У этих коллекций есть методы которые позволяют задать размер,
+	который может занимать коллекция в оперативной памяти.
+
+	Также можно указать время существования объекта в памяти.
+	Возможно есть поддержка других стратегий инвалидации.
+
+	LoadingCache<Key, Graph> graphs = CacheBuilder.newBuilder()
+    		.maximumSize(1000)
+		.expireAfterWrite(10, TimeUnit.MINUTES)
+
+
+	- Ссылка на библиотеку, есть примеры:
+	https://github.com/google/guava/wiki/CachesExplained
+
+	- 5-минутное видео с примером: 
+	https://vimore.org/watch/ikRVbAGQBhA/guava/
+
+	- Как автоматически обновлять кеш с помощью Google Guava? (оригинальна ссылка будет на sof):
+	http://qaru.site/questions/325630/how-to-automatically-refresh-cache-using-google-guava
+
+2. ehcache
+
+	Есть несколько объектов
+	 Configuration() 
+	  Один из методов конфигурации позволяет указать место на физ носителе куда будет записываться кеш
+	  Configuration().path("/path/to/store/data"));
+
+	 CacheConfiguration()
+	 .maxBytesLocalHeap(16, MemoryUnit.MEGABYTES)     //размер кэша
+    	 .maxBytesLocalOffHeap(256, MemoryUnit.MEGABYTES)
+
+	 Ehcache cache = cacheManager.getEhcache("myCache");
+	  cache.put(new Element());
+	  cache.put(new Element());
+
+	- Документация
+	http://www.ehcache.org/documentation/3.4/writers.html 
+
+	- статья "Распределённая система кеша ehcache для приложений любого уровня"
+	https://habrahabr.ru/post/25140/
+
+	- Небольшой Пример
+	https://ru.stackoverflow.com/questions/644690/
+
+	- Интеграция Ehcache и Spring 3.1:
+	http://www.javacore.ru/topic/86-ehcache-spring.htm 
+
+	- Сравнение ehcache и hazelcast 
+	Осторожно, плохой перевод (оригинал на sof)!
+	http://qaru.site/questions/105845/hazelcast-vs-ehcache 
+
+3. hazelcast
+
+	Это распределённое хранилище объектов,
+ 	- по ссылке можно найти много хороших примеров.
+	https://hazelcast.org
+
+	- Виктор Гамов, Hazelcast — Распределяй и властвуй: введение в распределенные системы
+	https://www.youtube.com/watch?v=J68pBDicGII
+
+	- Запускаем кластер Hazelcast 3.1 на платформe Jelastic в InfoboxCloud
+	https://infoboxcloud.ru/community/blog/in_memory_data_grid/14.html
+
+	- Статья: Что, если выкинуть все лишнее из базы в распределенный кэш – наш опыт использования Hazelcast
+	https://habrahabr.ru/company/yamoney/blog/332462/ https://www.youtube.com/watch?v=iMJmA31hBlE 
+
+
+================================================================================
+Доп. информация:
+
+	- Просто любопытная статья, тема кешей хорошо проиллюстрирована 
+	https://dev.by/lenta/main/pochemu-realizatsiya-bolshogo-kesha-dannyh-na-net-i-java-ne-ochen-horoshaya-ideya
+
+	- Тут можно найти ещё упоминаний о том, какие библиотеки для кеширования есть:
+	http://qaru.site/questions/61150/lightweight-java-object-cache-api
+	https://stackoverflow.com/questions/575685/looking-for-simple-java-in-memory-cache 
+
+	- Статья: Почему реализация большого кэша данных на .net и java - не очень хорошая идея?
+	https://dev.by/lenta/main/pochemu-realizatsiya-bolshogo-kesha-dannyh-na-net-i-java-ne-ochen-horoshaya-ideya
+
+	- Часто можно встретить ссылки на JCS 
+	Это спецификация описывающая способы кеширования которые в принципе есть в джава 
+	Но это не совсем подходит под вопрос. Но там можно найти много любопытной информации
+	https://commons.apache.org/proper/commons-jcs/
+	https://commons.apache.org/proper/commons-jcs/commons-jcs-core/apidocs/org/apache/commons/jcs/JCS.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
