@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- способ коннекта к базе данных через пулл Apache DBCP -->
+    <!-- dataSource для jdbc -->
+    <bean id="dataSource"
+          class="org.apache.commons.dbcp.BasicDataSource">
+        <!-- определяет полное имя класса драйвера JDBC -->
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <!-- полный JDBC URL базы данных, выключено использование SSL - false, явно прописаны настройки временной зоны -->
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/spitter?
+                  useSSL=false&amp;
+                  useUnicode=true&amp;
+                  useJDBCCompliantTimezoneShift=true&amp;
+                  useLegacyDatetimeCode=false&amp;
+                  serverTimezone=UTC" />
+        <!-- аутентификация -->
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+        <property name="initialSize" value="5" />
+        <property name="maxActive" value="10" />
+    </bean>
+
+    <!-- Для выполнения своей работы шаблону SimpleJdbcTemplate необходим компонент,
+         реализующий интерфейс DataSource-->
+    <bean id="jdbcTemplate"
+          class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="dataSource" />
+    </bean>
+
+    <!-- работа с шаблоном SimpleJdbcTemplate, внедряем его-->
+    <bean id="spitterDao"
+          class="by.aazqsc.home.in_action.data_1_jdbc.JdbcSpitterDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+
+
+    <!-- ###################### HIBERNATE ######################## -->
+
+    <!-- способ коннекта к базе данных через пулл Apache DBCP -->
+    <!-- 1
+         dataSource для Hibernate -->
+    <!-- это учебный пример, ввиду чего для наглядности мы не инкапсулируем
+         а дублируем проперти, помни что дублирование кода - это плохо,
+         здесь поддержка кода не будет осуществлятся, в случае неактуальности примера
+         будет создан новый -->
+    <bean id="dataSourceHibernate" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/spitter?
+                  useSSL=false&amp;
+                  useUnicode=true&amp;
+                  useJDBCCompliantTimezoneShift=true&amp;
+                  useLegacyDatetimeCode=false&amp;
+                  serverTimezone=UTC" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+        <property name="initialSize" value="5" />
+        <property name="maxActive" value="10" />
+    </bean>
+
+    <!-- 2
+         Интерфейс Session обеспечивает
+         базовую функциональность доступа к данным, позволяя сохранять,
+         обновлять, удалять и загружать объекты в/из базы данных. Именно
+         через интерфейс Session прикладные объекты DAO будут выполнять
+         все операции с хранилищем данных.
+
+         получить сессию мы можем из специально обученной фабрики LocalSessionFactoryBean
+         -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceHibernate" />
+        <!-- Здесь мы указываем файлы в которых сконфигурированы поджо для hibernate
+             есть вид записи где мы указываем директорию а не отдельные файлы
+             это очень удобно -->
+        <property name="mappingResources">
+            <list>
+                <value>hibernate_hbmxml/Spitter.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 3
+         работа с шаблоном HibernateSpitterDao - это наша имплиментация DAO (будто-бы),
+         внедряем его -->
+    <bean id="HibernateSpitterDao"
+          class="by.aazqsc.home.in_action.data_2_hibernate.HibernateSpitterDao">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
+
+    <!-- 4 (опционально)
+         Чтобы добавить преобразование исключений без применения
+         класса шаблона поддержки Hibernate
+
+         это механизм постобработки компонентов, добавляющий объект-советник во все компоненты,
+         отмеченные аннотацией @Repository , который будет перехватывать все специфические исключения и
+         преобразовывать их в соответствующие неконтролируемые исключения Spring.
+    -->
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+</beans>

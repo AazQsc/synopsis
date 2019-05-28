@@ -1,0 +1,60 @@
+    group 'by.aasqsc.home'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Весна!
+    compile 'org.springframework:spring-context:5.1.7.RELEASE'
+    compile 'org.springframework:spring-beans:5.1.7.RELEASE'
+
+    // необходимо для работы AOP
+    compile group: 'org.springframework', name: 'spring-aop', version: '5.1.7.RELEASE'
+    compile group: 'org.springframework', name: 'spring-aspects', version: '5.1.7.RELEASE'
+
+
+    //------- это нужно для работы с jdbc -----------------------------------------
+    /* 1
+     * Модуль весны для работы с java data base connection.
+     *
+     * Можно ещё вот так, но отличается API, хотя это более молодежный вариант
+     * compile group: 'org.springframework', name: 'spring-jdbc', version: '5.0.5.RELEASE'
+     *
+     * конфликтует с бд spring-orm
+     */
+    //compile group: 'org.springframework', name: 'spring-jdbc', version: '2.0.6'
+    /* 2
+     * Jakarta Commons Database Connection Pooling
+     * будем получать доступ к БД через этот пул
+     *
+     * если мы будем юзать сингл подключение к бд, то этот блок вроде не нужен
+     */
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
+    /* 3
+     * Коннектор нужен для работы драйвера spring-jdbc
+     */
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.11'
+
+
+    //------- это нужно для работы с jpa и hibernate ------------------------------------
+    /* 1
+     * Спринг-орм для работы с.. орм
+     * конфликтует с бд spring-jdbc
+     */
+    compile group: 'org.springframework', name: 'spring-orm', version: '5.1.7.RELEASE'
+    /* 2
+     * hibernate
+     */
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.3.1.Final'
+    compile group: 'com.h2database', name: 'h2', version: '1.4.197'
+
+
+    //------- юнит тесты ----------------------------------------------------------------
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

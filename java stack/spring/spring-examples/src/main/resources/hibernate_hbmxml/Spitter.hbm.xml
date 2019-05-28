@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="by.aazqsc.home.in_action.data_1_jdbc.Spitter" table="spitter">
+        <id name="id" type="long" column="ID">
+            <generator class="native"/>
+        </id>
+
+        <property name="username" column="username" type="string"/>
+        <property name="password" column="password" type="string"/>
+        <property name="fullName" column="fullname" type="string"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,90 @@
+JUGLviv meetup: Spring Boot the Ripper (2 июн. 2017)
+https://www.youtube.com/watch?v=8xa0RWMwAOE
+
+### 1 ###
+pom.xml
+
+По умолчанию бут подтягивает вот что...
+artifactId : spring-boot-starter-parent
+он тянет
+artifactId : spring-boot-dependencies
+а он тянет ещё 2.5к строк зависимостей в dependencyManagement
+
+но это не камильфо 
+будем использовать bom.xml (это такой пом в котором есть только блок dependencyManagement)
+
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>
+			<artifactId>platform-bom
+			
+ещё он нам даёт плагин:
+spring-boot-maven-plugin
+
+### 2 ###
+Tomcat
+
+Он очень хочет найти web.xml но если Tom версии 7+ и сервлеты 3+ то он ещё умеет java конфигурации искать.
+Но как Tom найдет нашу конфигурацию на джава? Что он должен уметь искать?
+Он умеет искать javax.servlet.ServletContainerInitialazer! Его имплиментацию. Но не всё так просто!
+
+Это стандарт который упрощает Spring
+
+Tomcat работает через SPI (Server Provider Interface)
+1. SPI - положи в jar файл (d META-INF.services), который будет называться javax.servlet.ServletContainerInitialazer (здесь это название файла!)
+2. В этом файле напиши (полное название со всеми пакетами) класс который будет имплиментировать мой javax.servlet.ServletContainerInitialazer(это уже интерфейс)
+	в весне мы там увидим запись - org.springframework.web.SpringServletContainerInitializer
+	томкат через загрузчик классов загрузит этот класс
+3. В этой имплиментации поставь аннотацию @HandlesTypes
+	в весне увдим - @HandlesTypes(WebApplicationInitializer.class)
+4. В эту аннотацию засунь название интерфейса любого которого ты хочешь!   
+5. после томкат ищет все имплементации из HandlesTypes (прием - WebApplicationInitializer)
+
+---
+
+А что вообще требуется от нас? Хм... имплиментировать WebApplicationInitializer и переопределить метод onStartup и в нем настроить контексты.
+Но с настройкой контекста есть свои заморочки... (но за нас может всю эту конфигурацию контекста сделать SpringBootServletInitializer)
+
+А что если мы в методе onStartup напишем SpringApplication.run(классСАннотациейSpringBootApplication.class), так можно? Было бы круто.
+Но нет, так мы получим Tomcat в Tomcat'е = )
+
+А зделать нужно вот как:
+
+@SpringBootApplication
+public class Application extends SpringBootServletInitializer {
+
+	// этот метод не обязательный, но здесь можно ещё какую-нибудь конфигурацию допилить
+	// это не запуститься в эмбедет, только в контейнере томката (это для контейнера томката)
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder app){
+		return app.source(Application.class);
+	}
+	
+	// типо не обязательный, но без него ничего не будет работать
+	// если запустить через java -jar будет работать с эмбедет томкатом (это для эмбедет)
+	psvm {
+		SpringApplication.run(Application.class, args);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

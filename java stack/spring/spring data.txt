@@ -1,0 +1,182 @@
+SPRING DATA предоставляет модель программирования на основе Spring для доступа к данным, сохраняя при этом особые черты базового хранилища данных.
+
+Некоторые модули экосистемы SPRING DATA:
+   Spring Data Commons - ядро
+   Spring Data JPA
+   Spring Data JDBC
+   Spring Data MongoDB
+   Spring Data REST
+
+
+Фреймворк Spring разделяет фиксированные и переменные части процесса доступа к данным на два отдельных класса: шаблоны и обратные вызовы. 
+Шаблоны управляют фиксированной частью процесса, а пользовательский программный код доступа к данным обслуживает обратные вызовы.
+
+Некоторые шаблоны (паттерн 'шаблонный метод')
+   JdbcTemplate
+   HibernateTemplate
+   JpaTemplate
+												SimpleJdbcTemplate
+Прикладной объект DAO ---> Поддержка DAO ---> Шаблон доступа к данным ---> фреймворк обслуживания хранилища - база данных
+
+Существует несколько типов репозиториев, различающихся по набору возможностей:
+	- CrudRepository, указанный в примере, предоставляет базовый набор методов для доступа к данным. Данный интерфейс является универсальным и может быть использован не только в связке с JPA.
+	- Repository — базовый тип репозиториев, не содержит каких-либо методов, так же является универсальным.
+	- PagingAndSortingRepository — универсальный интерфейс, расширяющий CrudRepository и добавляющий поддержку пейджинации и сортировки.
+	- JpaRepository — репозиторий, добавляющий возможности, специфичные для JPA.
+
+	И две реализации, которые можно использовать для каких-нибудь нетривиальных задач, вроде написания реализации какого-нибудь метода с нестандартным поведением:
+
+	- QueryDslJpaRepository — реализация JpaRepository для взаимодействия с QueryDsl.
+	- SimpleJpaRepository — простая реализация JpaRepository.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+http://projects.spring.io/spring-data/#quick-start	<----- ссылка на доки
+
+Jakarta Commons Database Connection Pooling (DBCP)
+http://jakarta.apache.org/commons/dbcp
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Business object (Доменные объекты) — это объекты в объектно-ориентированных компьютерных программах, выражающие сущности из модели предметной области.
+				     бизнес-логика ---> dao интерфейс <--- dao имплиментация
+
+Data Access Object (DAO) — «объект доступа к данным» — один из шаблонов проектирования, используется для передачи данных между подсистемами приложения.
+
+Data Transfer Object (DTO) — один из шаблонов проектирования, используется для передачи данных между подсистемами приложения. 
+Data Transfer Object, в отличие от business object или data access object не должен содержать какого-либо поведения.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+JDBC
+
+Порядок работы с jdbc:
+ 0. Подключаем зависимости: для пулла коннектов, драйвер для бд, spring-jdbc
+ 1. Конфигурируем пулл коннектов и подключение к бд
+ 2. Создать экземпляр шаблона для работы с jdbc и инджектнуть его
+	Кромет того, можно быть наследником шаблона и использовать его api из коробки
+	Более того можно всё сконфигурировать так, чтобы кода шаблона не было в классе, который управляет логикой работы с бд
+ 3. Воспользоваться шаблоном для выполнения запросов
+
+
+ 1)
+    <!-- способ коннекта к базе данных через пулл Apache DBCP -->
+    <bean id="dataSource"
+          class="org.apache.commons.dbcp.BasicDataSource">
+        <!-- определяет полное имя класса драйвера JDBC -->
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <!-- полный JDBC URL базы данных, выключено использование SSL - false, явно прописаны настройки временной зоны -->
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/spitter?
+                  useSSL=false&amp;
+                  useUnicode=true&amp;
+                  useJDBCCompliantTimezoneShift=true&amp;
+                  useLegacyDatetimeCode=false&amp;
+                  serverTimezone=UTC" />
+        <!-- аутентификация -->
+        <property name="username" value="root" />
+        <property name="password" value="1234" />
+        <property name="initialSize" value="5" />
+        <property name="maxActive" value="10" />
+    </bean>
+
+  2)
+	в классе JdbcSpitterDaoImpl
+
+    private SimpleJdbcTemplate jdbcTemplate;
+
+	конфигурация
+
+    <bean id="jdbcTemplate"
+          class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+        <constructor-arg ref="dataSource" />
+    </bean>
+
+    <bean id="spitterDao"
+          class="by.aazqsc.home.in_action.spitter.JdbcSpitterDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+
+  3)
+    jdbcTemplate.queryForObject(...
+    jdbcTemplate.queryForObject(...
+	jdbcTemplate.update(...
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+HIBERNATE
+
+Порядок работы с Hibernate:
+0. Подключаем зависимости
+	compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
+    compile group: 'org.springframework', name: 'spring-orm', version: '5.0.6.RELEASE'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.3.1.Final'
+    compile group: 'com.h2database', name: 'h2', version: '1.4.197'
+1. Конфигурируем подключение к бд - dataSource
+2. Конфигурируем sessionFactory
+3. Подключаем постпроцессор для работы с аннотациями (@Repository)
+4. Конфигурируем бин даоимплиментации
+5. Конфигурируем файл hbm.xml в котором описываем связь поджо с бд
+6. Кодим дао имплиментацию, вешаем аннотацию (@Repository)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

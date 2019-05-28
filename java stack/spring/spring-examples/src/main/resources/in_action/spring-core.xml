@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+       default-init-method="turnOffLights">
+
+    <!-- так можно подключить все BPP для аннотаций в Spring
+         <context:annotation-config/>
+
+         а так определить дефолтные методы инициализации и дестроя,
+         будут вызваны после инициализации контекста и после его дестроя... вроде,
+         то есть поведение такое - каждый из этих методов вызовется только однажды,
+         а не перед каждой инициализацией каждого нового бина, вот:
+             <beans...
+             default-init-method="turnOnLights"
+             default-destroy-method="turnOffLights">
+         Причем можно сделать специальный класс который будет содержать эти методы
+         и вовсе не нужно их создавать в каждом отдельном классе
+    -->
+
+    <!-- Простое объявление бина
+         id - это имя, и указываем какого типа наш бин -->
+    <bean id="duke" class="by.aazqsc.home.in_action.core_1_springidol.juggler.PoeticJuggler">
+        <!-- внедрение значения через конструктор -->
+        <constructor-arg value="15" />
+        <!-- внедрение ссылки через конструктор -->
+        <constructor-arg ref="sonnet29" />
+    </bean>
+
+    <bean id="sonnet29" class="by.aazqsc.home.in_action.core_1_springidol.juggler.Sonnet29" />
+    <bean id="saxophone" class="by.aazqsc.home.in_action.core_1_springidol.instrumentalist.Saxophone" />
+    <bean id="piano" class="by.aazqsc.home.in_action.core_1_springidol.instrumentalist.Piano" />
+
+    <!-- создание бина через фабричный метод -->
+    <bean id="theStage" class="by.aazqsc.home.in_action.core_1_springidol.scene.Stage"
+          factory-method="getInstance" />
+
+    <!-- 1. Cоздание бина прототайпа, при каждом новом обращении к бину будет создан
+            новый его экземпляр: scope="prototype"
+         2. Для класса разрешено автоматическое связывание по имени:
+            это означает, что для каждой проперти имя которой совпадет с айди бина
+            будет создана связь (внедрение) автоматический.
+
+    <bean id="ticket"
+          class="com.springinaction.core_1_springidol.Ticket"
+          autowire="byName"
+          scope="prototype" />
+
+            autowire="byType" тоже самое только ищет совпадение по типу.
+            должен быть только один компонент этого типа, иначе кинет эксепшн.
+            Способ обозначить, что конпонент не нужно использовать для связывания по типу
+            установим атрибут primary="false", нужно оставить только один компонент с
+            праймари тру - он и будет использоваться для связывания.
+
+            ещё конечно можно отметить в компонентах autowire-candidate="false"
+            это зеркальный вариант решения
+
+    <bean id="saxophone"
+          class="com.springinaction.core_1_springidol.Saxophone"
+          primary="false" />
+
+          автоматическое связывание через конструктор
+          спринг сам решит, что инджектнуть в конструктор
+          по сути это связывание по типу
+          если класс имеет несколько конструкторов, каждый из которых отвечает
+          требованиям автоматического связывания spring выкинет эксепшн
+
+    <bean id="duke"
+          class="com.springinaction.core_1_springidol.PoeticJuggler"
+          autowire="constructor" />
+
+    -->
+
+    <!-- Метод указанный в init отработает при инициализации бина
+         Метод указанный в destroy отработает при уничтожении бина -->
+    <bean id="auditorium"
+          class="by.aazqsc.home.in_action.core_1_springidol.scene.Auditorium"
+          init-method="turnOnLights"
+          destroy-method="turnOffLights"/>
+
+    <bean id="kenny"
+          class="by.aazqsc.home.in_action.core_1_springidol.instrumentalist.Instrumentalist">
+        <!-- Элемент проперти вызовет сеттер для song и положит туда вэлью -->
+        <property name="song" value="Jingle Bells" />
+        <!-- здесь мы уже внедряем не примитивный тип или строку, а ссылочный -->
+        <property name="instrument" ref="saxophone" />
+        <!-- Вот так можно объявить инструмент, как внутренний компонент.
+        <property name="instrument">
+            <bean class="org.springinaction.core_1_springidol.Saxophone" />
+        </property> -->
+    </bean>
+
+    <!-- Сокращенная запись бина, с использованием пространства имен 'p'
+         xmlns:p="http://www.springframework.org/schema/p"
+
+         <bean id="kenny" class="com.springinaction.core_1_springidol.Instrumentalist"
+         p:song = "Jingle Bells"
+         p:instrument-ref = "saxophone" />
+    -->
+
+    <bean id="stefano"
+          class="by.aazqsc.home.in_action.core_1_springidol.instrumentalist.Instrumentalist">
+        <!-- внедрение возвращаемого значения, афигеть!
+             прием называется: внедрения методов чтения
+             Но вернуть рекомендуется только протатайп! саксофон не протатайп.
+             Будет всегда возвращать ссылку на единственный саксофон
+             Ещё тип должен соответствовать возвращаемому значению -->
+        <lookup-method name="getInstrument" bean="saxophone" />
+        <property name="instrument" ref="piano" />
+        <property name="song" value="Greensleeves" />
+    </bean>
+
+    <!-- создание абстрактного класса
+         Кенни легко может стать его наследником, но не станет > )
+         Кстати, родительские компоненты могут быть и неабстрактными. -->
+    <bean id="baseSaxophonist"
+          class="by.aazqsc.home.in_action.core_1_springidol.instrumentalist.Instrumentalist"
+          abstract="true">
+        <property name="instrument" ref="saxophone" />
+        <property name="song" value="Jingle Bells" />
+    </bean>
+
+    <!-- наследники абстрактного класса -->
+    <bean id="david" parent="baseSaxophonist" />
+    <bean id="frank" parent="baseSaxophonist">
+        <!-- переопределяем метод абстрактного класса -->
+        <property name="song" value="Mary had a little lamb" />
+    </bean>
+
+    <!-- А как тебе такой абстрактный класс! -->
+    <bean id="basePerformer" abstract="true">
+        <property name="song" value="Somewhere Over the Rainbow" />
+    </bean>
+
+    <!-- этот объект наследует только одно поле, но ничего больше -->
+    <bean id="stevie"
+          class="by.aazqsc.home.in_action.core_1_springidol.instrumentalist.Instrumentalist"
+          parent="basePerformer">
+        <property name="instrument" ref="piano" />
+    </bean>
+
+    <bean id="hank"
+          class="by.aazqsc.home.in_action.core_1_springidol.onemanband.OneManBandList">
+        <!--Внедряем коллекцию, кроме значений <ref> можно также использовать
+            <value> , <bean> и <null/> и даже другие элементы <list> -->
+        <property name="instruments">
+            <!--элемент <list> может применяться к свойствам,
+                которые могут быть любыми реализациями
+                java.util.Collection или массивом.
+
+                Даже set, при этом будет сохранен контракт на уникальность объектов
+                в куче. Даже не смотря на то, что есть элемент <set> -->
+            <list>
+                <!-- просто бины -->
+                <ref bean="piano" />
+                <ref bean="saxophone" />
+                <!-- ref bean="harmonica" / -->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="hank2" class="by.aazqsc.home.in_action.core_1_springidol.onemanband.OneManBandMap">
+        <!-- Внедрение пар ключ значение -->
+        <property name="instruments">
+            <!-- и ещё есть <props> – это элемент для определения коллекций типа java.
+            util.Properties; -->
+            <map>
+                <entry key="PIANO" value-ref="piano" />
+                <entry key="CYMBAL" value-ref="saxophone" />
+                <!-- entry key="HARMONICA" value-ref="harmonica" / -->
+            </map>
+        </property>
+    </bean>
+
+    <!-- класс Аспекта -->
+    <bean id="audience" class="by.aazqsc.home.in_action.core_3_aop.Audience" />
+
+    <!-- блок конфигурации аоп -->
+    <aop:config>
+        <!-- внутри объявлен только один аспект, их может быть больше
+             Ссылка на компонент audience -->
+        <aop:aspect ref="audience">
+            <!-- Определение среза множества точек сопряжения -->
+            <aop:pointcut id="performance" expression=
+                    "execution(* by.aazqsc.home.in_action.core_1_springidol.Performer.perform(..))"
+            />
+
+            <!-- советы -->
+            <!-- Перед выступлением -->
+            <aop:before pointcut-ref="performance"
+                        method="takeSeats" />
+            <!-- Перед выступлением -->
+            <aop:before pointcut-ref="performance"
+                        method="turnOffCellPhones" />
+            <!-- После выступления -->
+            <aop:after-returning pointcut-ref="performance"
+                                 method="applaud" />
+            <!-- После неудачного выступления -->
+            <aop:after-throwing pointcut-ref="performance"
+                                method="demandRefund" />
+
+            <!-- Совет, выполняемый и до, и после -->
+            <aop:around
+                    pointcut-ref="performance"
+                    method="watchPerformance" />
+            <!-- помни о том, что в методы аспектов можно передавать аргументы -->
+        </aop:aspect>
+    </aop:config>
+</beans>
