@@ -1,0 +1,12 @@
+#IDEA
+.idea
+*.iml
+out
+build
+
+#Gradle
+.gradle
+
+#Trash
+*.json
+

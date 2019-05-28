@@ -1,0 +1,59 @@
+JSON (JavaScript Object Notation) - текстовый формат обмена данными, основанный на JavaScript.
+
+JSON часто используется для сериализации и передачи структурированных данных по сети.
+JSON технология лежит в основе REST веб-сервисов.
+
+В качестве альтернативы XML JSON непосредственно используется в коде
+JavaScript на веб-страницах.
+
+Вот библиотеки для работы с JSON можно найти здесь и многую другую полезную информацию можно найти здесь:
+https://json.org/
+
+Аналогично технологии XML Schema существует JSON Schema
+JSON активно используется в Ajax (используется в динамическом вебе), что во многом обуславливает популярность этого формата.
+
+-----------------------------------------------------------------------
+Jackson — http://codehaus.org/
+Jackson — Java библиотека для работы с данными в формате JSON.
+Позволяет реализовать потоковый и объектный подходы в работе с .json
+
+Потоковый API Jackson использует объекты:
+		JsonGenerator — для генерации JSON
+		JsonParser — для чтения JSON
+
+Преобразование Java объекта в JSON:
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(new FileOutputStream(filepath, user);
+
+Преобразование JSON в Java объект:
+		ObjectMapper mapper = new ObjectMapper();
+		User user = (User) mapper.readValue(new FileInputStream(filepath), User.class);
+
+Объектный API работает с так называемым 'Tree Model', пример:
+		// Создаем объект ObjectMapper
+		ObjectMapper mapper = new ObjectMapper();
+
+		// Получаем доступ к данным в формате JSON
+		BufferedReader fileReader = new BufferedReader(new FileReader("c:\\user.json"));
+
+		// Создаем корневой объект типа JsonNode
+		JsonNode rootNode = mapper.readTree(fileReader);
+
+		// Получаем доступ к нужным нам данным по значению ключа "name"
+		JsonNode nameNode = rootNode.path("name");
+		System.out.println(nameNode.getTextValue());
+
+Кроме того Jackson умеет создавать pojo взяв за основу json-файл, и наоборот умеет преобразовывать pojo в .json
+Ещё Jackson круто умеет работать со связкой  JSON + MapCollection 
+
+
+
+
+
+
+
+
+
+
+
+

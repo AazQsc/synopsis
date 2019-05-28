@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<surveys>
+    <response username="Bob">
+        <question subject="question1">A</question>
+        <question subject="question2">B</question>
+        <question subject="question3">A</question>
+        <question subject="question4">D</question>
+        <question subject="question5">B</question>
+    </response>
+    <response username="Ron">
+        <question subject="question1">C</question>
+        <question subject="question2">A</question>
+        <question subject="question3">A</question>
+        <question subject="question4">D</question>
+        <question subject="question5">A</question>
+    </response>
+    <response username="Carol">
+        <question subject="question1">A</question>
+        <question subject="question2">C</question>
+        <question subject="question3">A</question>
+        <question subject="question4">D</question>
+        <question subject="question5">C</question>
+    </response>
+</surveys>
