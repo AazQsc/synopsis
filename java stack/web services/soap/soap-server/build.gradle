@@ -1,0 +1,18 @@
+group 'by.khamenka.andersenlab'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'war'
+
+dependencies {
+    compile group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '2.2', ext: 'pom'
+    //compile group: 'com.sun.istack', name: 'istack-commons-runtime', version: '2.22'
+
+    // Эти зависимости нужно проверить
+    //compile group: 'com.sun.xml.ws', name: 'jaxws-api', version: '2.3.0', ext: 'pom'
+
+    //compile group: 'com.sun.xml.ws', name: 'webservices-rt', version: '2.1-b16'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+
+    compile group: 'org.glassfish.metro', name: 'webservices-rt', version: '2.4.0'
+    compile group: 'org.glassfish.metro', name: 'webservices-api', version: '2.4.0'
+}

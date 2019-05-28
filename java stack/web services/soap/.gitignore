@@ -1,0 +1,14 @@
+#IDEA
+.idea
+*.iml
+out
+gen
+
+soap-another-way-client/out
+soap-client/out
+soap-server/out
+
+#GRADLE
+!gradle-wrapper.jar
+.gradle
+build
