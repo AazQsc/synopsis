@@ -1,0 +1,15 @@
+#center{
+    margin: auto;
+}
+
+.container{
+    display: flex;
+}
+
+.border{
+    width: 440px;
+    background: #ccc;
+    padding: 5px 14px 5px 5px;
+    border: solid 1px black;
+    float: left;
+}

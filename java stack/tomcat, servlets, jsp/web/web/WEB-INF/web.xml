@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <!-- Servlets -->
+    <servlet>
+        <servlet-name>CalculatorServlet</servlet-name>
+        <servlet-class>by.khamenka.andersenlab.servlets.CalculatorServlet</servlet-class>
+        <!-- default param-->
+        <init-param>
+            <param-name>Cookie</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>HistoryServlet</servlet-name>
+        <servlet-class>by.khamenka.andersenlab.servlets.HistoryServlet</servlet-class>
+    </servlet>
+    <!-- mapping -->
+    <servlet-mapping>
+        <servlet-name>CalculatorServlet</servlet-name>
+        <url-pattern>/calculator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HistoryServlet</servlet-name>
+        <url-pattern>/calculator/history</url-pattern>
+    </servlet-mapping>
+
+    <!-- settings -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- http errors code -->
+    <error-page>
+        <!-- Missing resource -->
+        <error-code>404</error-code>
+        <location>/pages/errors/404.html</location>
+    </error-page>
+</web-app>
