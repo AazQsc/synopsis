@@ -10,11 +10,11 @@ Brief notes on programming.
 <br>
 
 - [architecture engineering](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering)
- * [the principles](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/the%20principles.txt)
- * [gofs-examples](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering/gofs-examples/src/by/khamenka/patterns)
- * [gofs patterns in uml](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/gofs%20patterns%20in%20uml.pdf)
- * [architecture patterns](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/architecture%20patterns.txt)
- * [code static analization](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/code%20static%20analization.txt)
+  * [the principles](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/the%20principles.txt)
+  * [gofs-examples](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering/gofs-examples/src/by/khamenka/patterns)
+  * [gofs patterns in uml](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/gofs%20patterns%20in%20uml.pdf)
+  * [architecture patterns](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/architecture%20patterns.txt)
+  * [code static analization](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/code%20static%20analization.txt)
 
 <br>
 
