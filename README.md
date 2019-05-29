@@ -3,18 +3,18 @@ Brief notes on programming.
 
 <br>
 
-- [algorithms and data structures](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering)
-  * [artificial intelligence](https://github.com/AazQsc/synopsis/tree/master/algorithms%20and%20data%20structures/artificial%20intelligence)
-    + [methodology](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/artificial%20intelligence/methodology.txt)
+- [algorithms and data structures](https://github.com/AazQsc/synopsis/tree/master/algorithms%20and%20data%20structures)
   * [grokking algorithms](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/grokking%20algorithms.txt)
+  * [artificial intelligence methodology](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/artificial%20intelligence%20methodology.txt)
 
 <br>
 
-+ [architecture engineering/gofs-examples](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering/gofs-examples/src/by/khamenka/patterns)
-+ [architecture engineering/gofs patterns in uml](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/gofs%20patterns%20in%20uml.pdf)
-+ [architecture engineering/architecture patterns](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/architecture%20patterns.txt)
-+ [architecture engineering/code static analization](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/code%20static%20analization.txt)
-+ [architecture engineering/the principles](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/the%20principles.txt)
+- [architecture engineering](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering)
+ * [the principles](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/the%20principles.txt)
+ * [gofs-examples](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering/gofs-examples/src/by/khamenka/patterns)
+ * [gofs patterns in uml](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/gofs%20patterns%20in%20uml.pdf)
+ * [architecture patterns](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/architecture%20patterns.txt)
+ * [code static analization](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/code%20static%20analization.txt)
 
 <br>
 
