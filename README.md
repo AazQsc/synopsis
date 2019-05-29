@@ -3,8 +3,9 @@ Brief notes on programming.
 
 <br>
 
-+ [algorithms and data structures/artificial intelligence/methodology](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/artificial%20intelligence/methodology.txt)
-+ [algorithms and data structures/grokking algorithms](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/grokking%20algorithms.txt)
++ [algorithms and data structures](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering)
+ * [algorithms and data structures/artificial intelligence/methodology](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/artificial%20intelligence/methodology.txt)
+ * [algorithms and data structures/grokking algorithms](https://github.com/AazQsc/synopsis/blob/master/algorithms%20and%20data%20structures/grokking%20algorithms.txt)
 
 <br>
 
