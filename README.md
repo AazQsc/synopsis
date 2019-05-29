@@ -58,14 +58,14 @@ Brief notes on programming.
   * [tomcat, servlets, jsp](https://github.com/AazQsc/synopsis/tree/master/java%20stack/tomcat%2C%20servlets%2C%20jsp)
     + [tomcat, servlets, jsp](https://github.com/AazQsc/synopsis/blob/master/java%20stack/tomcat%2C%20servlets%2C%20jsp/tomcat%2C%20servlets%2C%20jsp.txt)
     + [web-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/tomcat%2C%20servlets%2C%20jsp/web-example)
-- [Effective Java (Joshua Bloch)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/Effective%20Java%20(Joshua%20Bloch).txt)
-- [amqp, rabbit, java-story (Konovalov)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/amqp%2C%20rabbit%2C%20java-story%20(Konovalov).txt)
-- [java](https://github.com/AazQsc/synopsis/blob/master/java%20stack/java.txt)
-- [annotations](https://github.com/AazQsc/synopsis/blob/master/java%20stack/annotations.txt)
-- [JUnit](https://github.com/AazQsc/synopsis/blob/master/java%20stack/JUnit.txt)
-- [hibernate](https://github.com/AazQsc/synopsis/blob/master/java%20stack/hibernate.txt)
-- [jdbc](https://github.com/AazQsc/synopsis/blob/master/java%20stack/jdbc.txt)
-- [javafx-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/javafx/src/by/khamenka/home)
+  * [Effective Java (Joshua Bloch)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/Effective%20Java%20(Joshua%20Bloch).txt)
+  * [amqp, rabbit, java-story (Konovalov)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/amqp%2C%20rabbit%2C%20java-story%20(Konovalov).txt)
+  * [java](https://github.com/AazQsc/synopsis/blob/master/java%20stack/java.txt)
+  * [annotations](https://github.com/AazQsc/synopsis/blob/master/java%20stack/annotations.txt)
+  * [JUnit](https://github.com/AazQsc/synopsis/blob/master/java%20stack/JUnit.txt)
+  * [hibernate](https://github.com/AazQsc/synopsis/blob/master/java%20stack/hibernate.txt)
+  * [jdbc](https://github.com/AazQsc/synopsis/blob/master/java%20stack/jdbc.txt)
+  * [javafx-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/javafx/src/by/khamenka/home)
 
 <br>
 
