@@ -1,5 +1,6 @@
 # synopsis
 Brief notes on programming.
+![](https://github.com/AazQsc/synopsis/blob/master/picture1.bmp)
 
 <br>
 
