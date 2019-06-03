@@ -1,31 +1,47 @@
-JUGLviv meetup: Spring Boot the Ripper (2 июн. 2017)
+﻿JUGLviv meetup: Spring Boot the Ripper (2 июн. 2017)
 https://www.youtube.com/watch?v=8xa0RWMwAOE
 
-#########
-### 1 ###
+#########################################################
+### 1 ###################################################
 pom.xml
 
-По умолчанию бут подтягивает вот что...
+По умолчанию бут подтягивает вот что... 
 artifactId : spring-boot-starter-parent
 он тянет
 artifactId : spring-boot-dependencies
-а он тянет ещё 2.5к строк зависимостей в dependencyManagement
+а он тянет ещё 2.5к строк в dependencyManagement
 
-но это не камильфо 
-будем использовать bom.xml (это такой пом в котором есть только блок dependencyManagement)
+Но это не камильфо - это чужой parent, но это парент самого спринга,
+что удобно, так как помогает решить проблему совместимости версий.
+И это первая полезная штака которую даёт нам бут.
+
+bom - bill of materials - это такой пом в котором есть только блок dependencyManagement).
 
 <dependencyManagement>
 	<dependencies>
 		<dependency>
-			<groupId>
-			<artifactId>platform-bom
-			
-ещё он нам даёт плагин:
+			<groupId>io.spring.platform</groupId>
+			<artifactId>platform-bom</artifactId>
+			<version>Brussels-SR2</version>
+			<type>pom</type>
+			<scope>import</scope>
+		закрываем теги...
+
+вторая вещь - это плагин, который умеет паковать:
 spring-boot-maven-plugin
+Ещё через этот плагин можно собрать executable jar.
+Любопытный момент про то, как работает jar - внутри у него есть скрипт который объясняет ОС, с что делать и с помощью каких
+комманд запускать. И вообще:
+
+JAR это...
+	script
+	 +
+	Oxf4ra -> zip archive
+	тут есть манифест в котором говориться о том, какой main запускать
 
 
-#########
-### 2 ###
+#########################################################
+### 2 ###################################################
 Tomcat
 
 Он очень хочет найти web.xml но если Tom версии 7+ и сервлеты 3+ то он ещё умеет java конфигурации искать.
@@ -35,44 +51,129 @@ Tomcat
 Это стандарт который упрощает Spring:
 
 Tomcat работает через SPI (Server Provider Interface)
-1. SPI - положи в jar файл (d META-INF.services), который будет называться javax.servlet.ServletContainerInitialazer (здесь это 
+1. SPI - положи в jar файл (в META-INF.services), который будет называться javax.servlet.ServletContainerInitialazer (здесь это 
 	 название файла!)
 2. В этом файле напиши (полное название со всеми пакетами) класс который будет имплиментировать
    javax.servlet.ServletContainerInitialazer (это уже интерфейс) в весне мы там увидим запись - 
    org.springframework.web.SpringServletContainerInitializer - томкат через загрузчик классов загрузит этот класс
 3. В этой имплиментации поставь аннотацию @HandlesTypes
-   в весне увдим - @HandlesTypes(WebApplicationInitializer.class)
+   в весне увидим - @HandlesTypes(WebApplicationInitializer.class)
 4. В эту аннотацию засунь название интерфейса любого которого ты хочешь!   
 5. после томкат ищет все имплементации из HandlesTypes (прием - WebApplicationInitializer)
 
 ---
 
 А что вообще требуется от нас? Хм... имплиментировать WebApplicationInitializer и переопределить метод onStartup и в нем 
-настроить контексты.
-Но с настройкой контекста есть свои заморочки... (но за нас может всю эту конфигурацию контекста сделать SpringBootServletInitializer)
+настроить контексты. Но с настройкой контекста есть свои заморочки... 
+А что если мы в методе onStartup напишем SpringApplication.run (класс с Аннотацией  SpringBootApplication.class), так можно? 
+Было бы круто. Но нет, так мы получим Tomcat в Tomcat'е = )
+Можно убрать зависимость на spring-boot-starter-web и всё взлетит.. и через секунду кастомная конфигурация 
+проработает и всё выключится.
 
-А что если мы в методе onStartup напишем SpringApplication.run(классСАннотациейSpringBootApplication.class), так можно? Было бы круто.
-Но нет, так мы получим Tomcat в Tomcat'е = )
-
-А зделать нужно вот как:
+За нас может всю эту конфигурацию контекста сделать SpringBootServletInitializer!
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
 	// этот метод не обязательный, но здесь можно ещё какую-нибудь конфигурацию допилить
+	// и только поэтому стоит переопределять, иначе кастомная настройка есть в SpringBootServletInitializer
 	// это не запуститься в эмбедет, только в контейнере томката (это для контейнера томката)
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder app){
 		return app.source(Application.class);
 	}
 	
-	// типо не обязательный, но без него ничего не будет работать
+	// типо не обязательный, но без него ничего не будет работать (плагин не соберёт без main)
+	// Никогда не запуститься в tomcat, только java -jar 
 	// если запустить через java -jar будет работать с эмбедет томкатом (это для эмбедет)
-	psvm {
+	psvm (String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 
 }
+
+
+#########################################################
+### 3 ###################################################
+SpringApplication
+  - создаёт контекст (web context или jeneric context)
+  - создет invironment (-system.prop, application.yml, etc.. здесь проперти, профили, конфигурации..) при этом
+    используется EPP (environment post processor).
+  - отдает себя и инвайронмент ConfigFileApplicationListener'y
+
+	ConfigFileApplicationListener (Сначала работает как listener, потом как EPP)
+	  Слушает:
+		ApplicatonPreparedEvent
+		ApplicationEnvironmentPreparedEvet
+	  Загружает:
+		application.yml
+		application.properties
+		env vars
+		cmd args
+
+---------
+
+	psvm (String[] args) {
+		SpringApplication.run( ? , args); //
+	}
+
+Сюда можно подставить конфигурацию, или ссылку на конфигурацию (массив configuration cource), например вот так:
+  1. RipperApplication.class
+  2. String.class
+  3. "context.xml"
+  4. new ClassPathResource("context.xml")
+  5. Package.getPackage("conference.spring.boot.ripper")
+
+---------
+
+Жизненный цикл SpringApplication
+
+SpringApplication
+  1. вызов run
+  2. SA находит всех листенеров (по дефолту только ConfigFileApplicationListener)
+  3. SA находит и строит инвайронмент (с помощью ConfigFileApplicationListener)
+  4. SA ищет все ApplicationInitializer (ApplicationContextInitializer как пример, но их много)
+  5. SA создаёт контекст (используя  EPP)
+  6. SA запускает все ApplicationContextInitializer'ы которые нашел, чтобы подготовить контекст
+     на этом же этапе загружаются ресурсы
+  7. SA включает в работу BeanDefenitionLoader который использую бинДифинишенРидеры  заполняет registry
+     тоесть он вычитывает конфигурации используя бинДифинишенРидеры и складывает их в BeanDefinitionRegistry
+  8. refresh context см. spring core
+
+
+#########################################################
+### 4 ###################################################
+@SpringBootApplication
+
+включает в себя:
+	- @ComponentScan (сканирует все наши пакеты... )
+	- @Configuration (поэтому можно конфигурировать бины)
+	- @EnableAutoConfiguration (магия тут!)
+          она тянет EnableAutoConfigurationImportSelector.class...
+	  а он пойдет в спринг.факториес и будет искать там разные конфигурации
+	  это он связан с разными страртерами
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
