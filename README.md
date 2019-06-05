@@ -62,6 +62,7 @@
   * [Effective Java (Joshua Bloch)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/Effective%20Java%20(Joshua%20Bloch).txt)
   * [amqp, rabbit, java-story (Konovalov)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/amqp%2C%20rabbit%2C%20java-story%20(Konovalov).txt)
   * [java](https://github.com/AazQsc/synopsis/blob/master/java%20stack/java.txt)
+  * [functional interfaces](https://github.com/AazQsc/synopsis/blob/master/java%20stack/functional%20interface.txt)
   * [annotations](https://github.com/AazQsc/synopsis/blob/master/java%20stack/annotations.txt)
   * [JUnit](https://github.com/AazQsc/synopsis/blob/master/java%20stack/JUnit.txt)
   * [hibernate](https://github.com/AazQsc/synopsis/blob/master/java%20stack/hibernate.txt)
