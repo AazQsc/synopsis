@@ -44,6 +44,7 @@
     + [spring core](https://github.com/AazQsc/synopsis/blob/master/java%20stack/spring/spring%20core.txt)
     + [spring boot](https://github.com/AazQsc/synopsis/blob/master/java%20stack/spring/spring%20boot.txt)
     + [spring data](https://github.com/AazQsc/synopsis/blob/master/java%20stack/spring/spring%20data.txt)
+    + [spring data keywords](https://github.com/AazQsc/synopsis/blob/master/java%20stack/spring/spring%20data%20keywords.png)
     + [spring-examples (in_Action, Евгений Борисов)](https://github.com/AazQsc/synopsis/tree/master/java%20stack/spring/spring-examples/src/main/java/by/aazqsc/home)
   * [caches](https://github.com/AazQsc/synopsis/tree/master/java%20stack/caches)
     + [java & caches](https://github.com/AazQsc/synopsis/blob/master/java%20stack/caches/java%20%26%20caches)
