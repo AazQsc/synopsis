@@ -114,6 +114,43 @@ HIBERNATE
 6. Кодим дао имплиментацию, вешаем аннотацию (@Repository)
 
 
+===========================================================================================================
+ДОКЛАД Евгения Борисова — Spring Data? Да, та!
+https://www.youtube.com/watch?v=nwM7A4TwU3M
+===========================================================================================================
+
+Экосистема спринг Data
+	Spring DATA JPA
+	Spring DATA REDIS
+	Spring DATA MONGODB
+	Spring DATA GEMFIRE
+	Spring DATA SOLR
+	Spring DATA REST
+	Spring DATA NEO4J
+	Spring DATA HADOOP
+	Spring DATA JDBC Extensions
+	Spring DATA COUCHBASE
+	Spring DATA ELASTICSEARCH
+	Spring DATA CASSANDRA
+	Spring DATA DYNAMODB
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
