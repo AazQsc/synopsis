@@ -99,7 +99,8 @@
  Некоторые методы Thread:
   setName(String)		- задать имя потоку.
   setPriority(int от 1 до 10)	- задать приоритет потока 1 - min, 10 - max. Возможные значения priority — MIN_PRIORITY, 
-				  NORM_PRIORITY и MAX_PRIORITY.
+				  NORM_PRIORITY и MAX_PRIORITY. Это указание для планировщика потоков.
+				  Гипотетический, потоки с высоким приоритетом должны получать больше процессорного времени.
   setDaemon(boolian)		- сделать поток потоком-демоном.
   interrupt()			- (флаг)вывести поток у которого вызвали этот метод из состояния паузы (sleep(), wait() и join()).
 				  При этом сгенерируется исключение InterruptedException.
