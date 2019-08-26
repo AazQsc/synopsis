@@ -14,6 +14,7 @@
   * [the principles](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/the%20principles.txt)
   * [gofs-examples](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering/gofs-examples/src/by/khamenka/patterns)
   * [multithreading-patterns](https://github.com/AazQsc/synopsis/tree/master/architecture%20engineering/multithreading-patterns)
+  	+ [my list of multithreading patterns](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/multithreading-patterns/my%20list%20of%20m-threading%20patterns.txt)
 	+ [CLHQueuLock](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/multithreading-patterns/CLHQueuLock.jpg)
 	+ [taskExecutor wrapper from Alimenkov](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/multithreading-patterns/taskExecutor%20wrapper%20from%20Alimenkov.jpg)
   * [gofs patterns in uml](https://github.com/AazQsc/synopsis/blob/master/architecture%20engineering/gofs%20patterns%20in%20uml.pdf)
