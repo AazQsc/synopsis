@@ -22,13 +22,13 @@ public @interface Name {
 }
 
 * Аннотация @Target указывает, что именно мы можем пометить этой аннотацией, это может быть (см. ElementType):
-    TYPE 					- Class, interface (including annotation type), or enum declaration
-    FIELD 					- Field declaration (includes enum constants)
-    METHOD 					- Method declaration
+    TYPE 				- Class, interface (including annotation type), or enum declaration
+    FIELD 				- Field declaration (includes enum constants)
+    METHOD 				- Method declaration
     PARAMETER 				- Formal parameter declaration
     CONSTRUCTOR 			- Constructor declaration
     LOCAL_VARIABLE 			- Local variable declaration 
-    ANNOTATION_TYPE 		- Annotation type declaration
+    ANNOTATION_TYPE 			- Annotation type declaration
 	
     PACKAGE 				- Package declaration
 							  разместить такую аннотацию можно в Package-info.java
