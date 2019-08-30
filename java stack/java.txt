@@ -6,6 +6,7 @@
 - JMM
 - Размер объекта в java
 - DEBUG
+- GENERICS
 -
 ----------------------------------------
 
@@ -233,5 +234,62 @@ DEBUG
  -Xdebug ^
  -Xnoagent ^
  -Xrunjdwp:transport=dt_socket,address=18766,server=y,suspend=y ^
+
+
+================================================================================================================
+GENERICS
+
+Generic - средство обобщенного программирования в джава, позволяющее работать с обобщенными типами.
+
+tutorial: https://docs.oracle.com/javase/tutorial/java/generics/index.html
+habr: https://habr.com/ru/post/207360/
+и вот habr: https://habr.com/ru/company/sberbank/blog/416413/
+
+<? extends Number>			- Upper Bounded Wildcards - тип выше по иерархии чем Number (например Integer). Covariance.
+<?>							- Unbounded Wildcards - по сути обозначение того, что тип неизвестен
+<? super Integer>			- Lower Bounded Wildcards - тип ниже по иерархии чем Integer (например Number). Contravariance.
+
+принцип PECS (Producer Extends Consumer Super)*:
+1)	Covariance <? extends E> - выступает как Producer
+	Из ковариантной структуры можно производить чтение, но нельзя производить запись
+2)	Contravariance <? super E> - выступает как Consumer
+	Контравариантная структура работает наоборот - запись разрешена, чтение запрещено
+*(подробнее: конспект по Дж. Блоху ст. №28)
+
+На память: очевидно, что мы не можем копировать отсюда <? extends E> сюда <? extends E>... вам очевидно? Подумай. Нарисуй.
+Вот вам и PECS. = )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
