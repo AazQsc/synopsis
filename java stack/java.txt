@@ -246,7 +246,7 @@ habr: https://habr.com/ru/post/207360/
 и вот habr: https://habr.com/ru/company/sberbank/blog/416413/
 
 <? extends Number>			- Upper Bounded Wildcards - тип выше по иерархии чем Number (например Integer). Covariance.
-<?>							- Unbounded Wildcards - по сути обозначение того, что тип неизвестен
+<?>					- Unbounded Wildcards - по сути обозначение того, что тип неизвестен
 <? super Integer>			- Lower Bounded Wildcards - тип ниже по иерархии чем Integer (например Number). Contravariance.
 
 принцип PECS (Producer Extends Consumer Super)*:
