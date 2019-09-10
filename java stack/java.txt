@@ -10,7 +10,8 @@
 - CLASSLOADING
 - ENUM
 - STATIC
--
+- REFLECTION 
+- 
 ----------------------------------------
 
  
@@ -361,19 +362,30 @@ STATIC
 Спросите себя: "Имеет ли смысл вызывать этот метод, даже если Obj еще не построен?". Если да, то метод вполне может быть статическим.
 
 
+================================================================================================================
+REFLECTION 
 
+Рефлексия (от позднелат. reflexio — обращение назад) — это механизм исследования данных о программе во время её выполнения. 
+Рефлексия позволяет исследовать информацию о полях, методах, аннотациях, конструкторах классов и т. п..
 
+Тот самый пример в котором мы получаем доступ к приватному полю:
+  Field field = myClass.getClass().getDeclaredField("name");
+  field.setAccessible(true);
+  field.set(myClass, (String) "new value");
 
+Тот самый пример в котором мы вызываем приватный метод:
+  Method method = myClass.getClass().getDeclaredMethod("printData");
+  method.setAccessible(true);
+  method.invoke(myClass);
 
+Тот самый пример в котором мы создаем экземпляр класса через рефлексию:
+  Class clazz = Class.forName(MyClass.class.getName());
+  MyClass myClass = (MyClass) clazz.newInstance();			//нужен конструктор по-умолчанию
 
-
-
-
-
-
-
-
-
+Тот самый пример в котором мы создаем экземпляр клкласса используя кастомный конструктор через рефлеексию:
+  Class clazz = Class.forName(MyClass.class.getName());
+  Class[] params = {int.class, String.class};
+  MyClass myClass = (MyClass) clazz.getConstructor(params).newInstance(1, "default2");
 
 
 
