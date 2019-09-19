@@ -9,6 +9,8 @@ package by.khamenka.patterns.factoryMethod;
  * при этом объекты данного класса могут быть созданы его подклассами.
  * <p>
  * Дилегирует создание объекта подклассам.
+ * <p>
+ * Цель: отделить создание объектов от их использования.
  */
 
 import by.khamenka.patterns.factoryMethod.Creator.DigitalWatchMaker;
