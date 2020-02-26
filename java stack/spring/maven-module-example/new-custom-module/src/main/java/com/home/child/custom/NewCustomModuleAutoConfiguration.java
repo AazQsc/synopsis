@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Configuration;
 // to find all beans
 @Configuration
 @ComponentScan(value = {"com.home.child.custom"})
-public class DataBindingAutoConfiguration {
+public class NewCustomModuleAutoConfiguration {
 
 }
