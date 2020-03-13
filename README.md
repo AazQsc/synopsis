@@ -52,6 +52,7 @@
     + [spring data keywords](https://github.com/AazQsc/synopsis/blob/master/java%20stack/spring/spring%20data%20keywords.png)
     + [spring-examples (in_Action, Евгений Борисов)](https://github.com/AazQsc/synopsis/tree/master/java%20stack/spring/spring-examples/src/main/java/by/aazqsc/home)
     + [spring-maven-module-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/spring/maven-module-example)
+    + [spring-quartz-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/spring/quartz-scheduler)
   * [caches](https://github.com/AazQsc/synopsis/tree/master/java%20stack/caches)
     + [java & caches](https://github.com/AazQsc/synopsis/blob/master/java%20stack/caches/java%20%26%20caches)
     + [cache-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/caches/two-level-cache-example/src/by/khamenka/andersenlab)
