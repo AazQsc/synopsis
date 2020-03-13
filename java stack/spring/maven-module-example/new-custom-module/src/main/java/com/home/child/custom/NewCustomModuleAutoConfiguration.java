@@ -1,4 +1,4 @@
-package com.epam.prj.databinding;
+package com.home.child.custom;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

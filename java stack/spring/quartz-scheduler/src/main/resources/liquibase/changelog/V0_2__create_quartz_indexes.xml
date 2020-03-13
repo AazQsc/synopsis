@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="table_prefix" value='${quartz-table-prefix}'/>
+    <property name="schema" value='${quartz-schema-name}'/>
+
+    <changeSet id="2020-01-21_00:00" author="yaraslau.khamenka@gmail.com">
+        <createIndex tableName="${table_prefix}fired_triggers" indexName="idx_${table_prefix}ft_inst_job_req_rcvry" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="instance_name"/>
+            <column name="requests_recovery"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}fired_triggers" indexName="idx_${table_prefix}ft_j_g" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="job_name"/>
+            <column name="job_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}fired_triggers" indexName="idx_${table_prefix}ft_jg" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="job_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}fired_triggers" indexName="idx_${table_prefix}ft_t_g" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="trigger_name"/>
+            <column name="trigger_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}fired_triggers" indexName="idx_${table_prefix}ft_tg" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="trigger_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}fired_triggers" indexName="idx_${table_prefix}ft_trig_inst_name" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="instance_name"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}job_details" indexName="idx_${table_prefix}j_grp" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="job_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}job_details" indexName="idx_${table_prefix}j_req_recovery" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="requests_recovery"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_c" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="calendar_name"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_g" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="trigger_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_jg" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="job_group"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="IDX_${table_prefix}t_n_g_state" schemaName="${schema}">
+            <column name="SCHED_NAME"/>
+            <column name="TRIGGER_GROUP"/>
+            <column name="TRIGGER_STATE"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_n_state" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="trigger_name"/>
+            <column name="trigger_group"/>
+            <column name="trigger_state"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="IDX_${table_prefix}t_next_fire_time" schemaName="${schema}">
+            <column name="SCHED_NAME"/>
+            <column name="NEXT_FIRE_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_nft_misfire" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="misfire_instr"/>
+            <column name="next_fire_time"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_nft_st" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="trigger_state"/>
+            <column name="next_fire_time"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_nft_st_misfire" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="misfire_instr"/>
+            <column name="next_fire_time"/>
+            <column name="trigger_state"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_nft_st_misfire_grp" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="misfire_instr"/>
+            <column name="next_fire_time"/>
+            <column name="trigger_group"/>
+            <column name="trigger_state"/>
+        </createIndex>
+
+        <createIndex tableName="${table_prefix}triggers" indexName="idx_${table_prefix}t_state" schemaName="${schema}">
+            <column name="sched_name"/>
+            <column name="trigger_state"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

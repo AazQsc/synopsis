@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="table_prefix" value='${quartz-table-prefix}'/>
+    <property name="schema" value='${quartz-schema-name}'/>
+
+    <changeSet id="2020-01-21_01:00" author="yaraslau.khamenka@gmail.com">
+        <addForeignKeyConstraint baseTableSchemaName="${schema}"
+                                 referencedTableSchemaName="${schema}"
+                                 baseTableName="${table_prefix}triggers"
+                                 constraintName="${table_prefix}triggers_sched_name_fkey"
+                                 baseColumnNames="sched_name, job_name, job_group"
+                                 referencedTableName="${table_prefix}job_details"
+                                 referencedColumnNames="sched_name, job_name, job_group"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="${schema}"
+                                 referencedTableSchemaName="${schema}"
+                                 baseTableName="${table_prefix}simple_triggers"
+                                 constraintName="${table_prefix}simple_triggers_sched_name_fkey"
+                                 baseColumnNames="sched_name, trigger_name, trigger_group"
+                                 referencedTableName="${table_prefix}triggers"
+                                 referencedColumnNames="sched_name, trigger_name, trigger_group"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="${schema}"
+                                 referencedTableSchemaName="${schema}"
+                                 baseTableName="${table_prefix}cron_triggers"
+                                 constraintName="${table_prefix}cron_triggers_sched_name_fkey"
+                                 baseColumnNames="sched_name, trigger_name, trigger_group"
+                                 referencedTableName="${table_prefix}triggers"
+                                 referencedColumnNames="sched_name, trigger_name, trigger_group"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="${schema}"
+                                 referencedTableSchemaName="${schema}"
+                                 baseTableName="${table_prefix}simprop_triggers"
+                                 constraintName="${table_prefix}simprop_triggers_sched_name_fkey"
+                                 baseColumnNames="sched_name, trigger_name, trigger_group"
+                                 referencedTableName="${table_prefix}triggers"
+                                 referencedColumnNames="sched_name, trigger_name, trigger_group"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="${schema}"
+                                 referencedTableSchemaName="${schema}"
+                                 baseTableName="${table_prefix}blob_triggers"
+                                 constraintName="${table_prefix}blob_triggers_sched_name_fkey"
+                                 baseColumnNames="sched_name, trigger_name, trigger_group"
+                                 referencedTableName="${table_prefix}triggers"
+                                 referencedColumnNames="sched_name, trigger_name, trigger_group"/>
+    </changeSet>
+</databaseChangeLog>

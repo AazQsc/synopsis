@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="table_prefix" value='${quartz-table-prefix}'/>
+    <property name="schema" value='${quartz-schema-name}'/>
+
+    <property name="blob_type" value="bytea" dbms="postgresql"/>
+    <!-- for other dbms -->
+    <property name="blob_type" value="blob"/>
+
+    <changeSet id="2020-01-08_01:00" author="yaraslau.khamenka@gmail.com">
+        <createTable tableName="${table_prefix}locks" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lock_name" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, lock_name" tableName="${table_prefix}locks" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}fired_triggers" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entry_id" type="varchar(95)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="instance_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fired_time" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sched_time" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="varchar(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_name" type="varchar(200)"/>
+            <column name="job_group" type="varchar(200)"/>
+            <column name="is_nonconcurrent" type="boolean"/>
+            <column name="requests_recovery" type="boolean"/>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, entry_id" tableName="${table_prefix}fired_triggers" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}calendars" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="calendar_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="calendar" type="${blob_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, calendar_name" tableName="${table_prefix}calendars" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}paused_trigger_grps" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, trigger_group" tableName="${table_prefix}paused_trigger_grps" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}scheduler_state" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="instance_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_checkin_time" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="checkin_interval" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, instance_name" tableName="${table_prefix}scheduler_state" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}job_details" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(250)"/>
+            <column name="job_class_name" type="varchar(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_durable" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_nonconcurrent" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_update_data" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requests_recovery" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_data" type="${blob_type}"/>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, job_name, job_group" tableName="${table_prefix}job_details" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}triggers" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(250)"/>
+            <column name="next_fire_time" type="bigint"/>
+            <column name="prev_fire_time" type="bigint"/>
+            <column name="priority" type="integer"/>
+            <column name="trigger_state" type="varchar(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="bigint"/>
+            <column name="calendar_name" type="varchar(200)"/>
+            <column name="misfire_instr" type="smallint"/>
+            <column name="job_data" type="${blob_type}"/>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, trigger_name, trigger_group"
+                       tableName="${table_prefix}triggers" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}blob_triggers" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blob_data" type="${blob_type}"/>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, trigger_name, trigger_group"
+                       tableName="${table_prefix}blob_triggers" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}simprop_triggers" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="str_prop_1" type="varchar(512)"/>
+            <column name="str_prop_2" type="varchar(512)"/>
+            <column name="str_prop_3" type="varchar(512)"/>
+            <column name="int_prop_1" type="integer"/>
+            <column name="int_prop_2" type="integer"/>
+            <column name="long_prop_1" type="bigint"/>
+            <column name="long_prop_2" type="bigint"/>
+            <column name="dec_prop_1" type="numeric(13,4)"/>
+            <column name="dec_prop_2" type="numeric(13,4)"/>
+            <column name="bool_prop_1" type="boolean"/>
+            <column name="bool_prop_2" type="boolean"/>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, trigger_name, trigger_group"
+                       tableName="${table_prefix}simprop_triggers" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}cron_triggers" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cron_expression" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_zone_id" type="varchar(80)"/>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, trigger_name, trigger_group"
+                       tableName="${table_prefix}cron_triggers" schemaName="${schema}"/>
+
+        <createTable tableName="${table_prefix}simple_triggers" schemaName="${schema}">
+            <column name="sched_name" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_group" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repeat_count" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repeat_interval" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="times_triggered" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="sched_name, trigger_name, trigger_group"
+                       tableName="${table_prefix}simple_triggers" schemaName="${schema}"/>
+    </changeSet>
+</databaseChangeLog>
