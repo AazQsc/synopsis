@@ -61,7 +61,7 @@
     + [xml-parser-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/parsers/xml-parser-example/src/by/khamenka/andersenlab)
     + [json](https://github.com/AazQsc/synopsis/blob/master/java%20stack/parsers/json.txt)
     + [json-parser-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/parsers/json-parser-example/src/main/java/by.khamenka.andersenlab)
-    + [csv-converter](https://github.com/AazQsc/synopsis/tree/master/java%20stack/csv-converter)
+    + [csv-converter](https://github.com/AazQsc/synopsis/tree/master/java%20stack/parsers/csv-converter)
   * [web services](https://github.com/AazQsc/synopsis/tree/master/java%20stack/web%20services)
     + [web-service (soap, rest)](https://github.com/AazQsc/synopsis/blob/master/java%20stack/web%20services/web-service%20(soap%2C%20rest).txt)
     + [soap-example](https://github.com/AazQsc/synopsis/tree/master/java%20stack/web%20services/soap-example)
